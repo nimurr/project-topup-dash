@@ -1,6 +1,6 @@
 import signinImage from "/public/Auth/login.png";
 import authLogo from "../../../assets/auth/auth-logo.png";
- 
+
 
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Checkbox } from "antd";
@@ -23,27 +23,22 @@ const SignIn = () => {
     }
     try {
       const res = await login(data).unwrap();
-      console.log(res?.token);
 
-      navigate("/");
 
       if (res.error) {
         toast.error(res.error.data.message);
         console.log(res.error.data.message);
       }
-      if (res) {
-        dispatch(
-          loggedUser({
-            token: res?.token
-          })
-        );
+      if (res?.code === 200) {
+        localStorage.setItem("token", res?.data?.attributes?.tokens?.access?.token);
         toast.success(res?.message);
+        navigate("/");
       }
 
-      navigate("/");
 
 
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong");
     }
   };
@@ -124,8 +119,8 @@ const SignIn = () => {
             </div>
 
             <Form.Item>
-              <button loading={isLoading} className="w-full bg-[#00adb5] text-xl font-semibold text-white  rounded-md py-2" border={true}>
-                Login
+              <button type="submit" loading={isLoading} className="w-full bg-[#00adb5] text-xl font-semibold text-white  rounded-md py-2" border={true}>
+                Login {isLoading ? '...' : ''}
               </button>
             </Form.Item>
           </Form>

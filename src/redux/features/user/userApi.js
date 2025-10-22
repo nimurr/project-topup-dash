@@ -3,8 +3,8 @@ import { baseApi } from "../../baseApi/baseApi";
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: ({ from, to }) => ({
-        url: `/get-user-data?from=${from}&to=${to}`,
+      query: ({ page, limit }) => ({
+        url: `/users?page=${page}&limit=${limit}&sortBy=createdAt:desc`,
         method: "GET",
       }),
       providesTags: ["User-2"],
@@ -18,7 +18,7 @@ const userApi = baseApi.injectEndpoints({
     }),
     getSingleUser: builder.query({
       query: ({ id }) => ({
-        url: `/get-single-user-data/${id}`,
+        url: `/users/details/${id}`,
         method: "GET",
       }),
       providesTags: ["User-2"],

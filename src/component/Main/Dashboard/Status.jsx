@@ -3,6 +3,7 @@ import { PiCurrencyCircleDollar, PiUsers, PiUsersThreeFill } from "react-icons/p
 import { useGetDashboardStatusQuery } from "../../../redux/features/dashboard/dashboardApi";
 const Status = () => {
   const { data, isLoading } = useGetDashboardStatusQuery();
+  console.log(data);
 
 
 

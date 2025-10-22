@@ -5,81 +5,53 @@ import { IoIosSearch } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { GoInfo } from "react-icons/go";
+import { useGetAllUsersQuery } from "../../../redux/features/user/userApi";
 
 const { Item } = Form;
 
 const Users = () => {
-  // Static users data
-  const allUsers = [
-    {
-      id: 1,
-      fullName: "John Doe",
-      accountID: "A12345",
-      email: "john.doe@example.com",
-      phoneNumber: "+1234567890",
-      address_line1: "123 Main St",
-      createdAt: "2023-01-15T10:30:00Z",
-      imageUrl: "https://example.com/image1.jpg",
-      status: "Active",
-      gender: "Male",
-    },
-    {
-      id: 2,
-      fullName: "Jane Smith",
-      accountID: "B67890",
-      email: "jane.smith@example.com",
-      phoneNumber: "+0987654321",
-      address_line1: "456 Elm St",
-      createdAt: "2023-02-20T12:15:00Z",
-      imageUrl: "https://example.com/image2.jpg",
-      status: "Inactive",
-      gender: "Female",
-    },
-    {
-      id: 3,
-      fullName: "Michael Johnson",
-      accountID: "C11223",
-      email: "michael.johnson@example.com",
-      phoneNumber: "+1122334455",
-      address_line1: "789 Oak St",
-      createdAt: "2023-03-10T09:00:00Z",
-      imageUrl: "https://example.com/image3.jpg",
-      status: "Active",
-      gender: "Male",
-    },
-    // Add more static users as needed
-  ];
-
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25); // Set initial page size
   const [dataSource, setDataSource] = useState([]); // Store filtered data
+
+  // Pass page and limit dynamically to the query
+  const { data, isLoading, isFetching } = useGetAllUsersQuery({
+    page: currentPage,
+    limit: pageSize,
+  });
+ 
+
+  const usersData = data?.data?.attributes?.results || []; 
 
   // Format static user data
   useEffect(() => {
-    const formattedUsers = allUsers.map((user, index) => ({
-      id: user.id,
-      si: index + 1,
-      fullName: user.fullName,
-      accountID: user.accountID,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      address_line1: user.address_line1,
-      createdAt: user.createdAt,
-      imageUrl: user.imageUrl,
-      status: user.status,
-      gender: user.gender,
-    }));
-    setDataSource(formattedUsers);
-  }, []);
+    if (usersData.length > 0) {
+      const formattedUsers = usersData.map((user, index) => ({
+        id: user.id,
+        si: (currentPage - 1) * pageSize + index + 1, // Adjust the SI based on the current page
+        fullName: user.fullName,
+        accountID: user.accountID,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address_line1: user.address_line1,
+        createdAt: user.createdAt,
+        imageUrl: user.imageUrl,
+        status: user.status,
+        gender: user.gender,
+      }));
+      setDataSource(formattedUsers);
+    }
+  }, [usersData, currentPage, pageSize]); // Run whenever usersData, currentPage, or pageSize changes
 
   // Search Filter
   useEffect(() => {
     if (searchText.trim() === "") {
-      setDataSource(allUsers || []);
+      setDataSource(usersData);
     } else {
       setDataSource(
-        allUsers.filter(
+        usersData.filter(
           (user) =>
             user.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
             user.email.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -87,21 +59,21 @@ const Users = () => {
         )
       );
     }
-  }, [searchText]);
+  }, [searchText, usersData]);
 
   // Date Filter
   useEffect(() => {
     if (!selectedDate) {
-      setDataSource(allUsers || []);
+      setDataSource(usersData);
     } else {
       const formattedDate = selectedDate.format("YYYY-MM-DD");
       setDataSource(
-        allUsers.filter(
+        usersData.filter(
           (user) => moment(user.createdAt).format("YYYY-MM-DD") === formattedDate
         )
       );
     }
-  }, [selectedDate]);
+  }, [selectedDate, usersData]);
 
   const columns = [
     {
@@ -132,13 +104,19 @@ const Users = () => {
     },
   ];
 
+  // Handle page change
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize); // Update page size if changed
+  };
+
   return (
     <section>
       <div className="md:flex justify-between items-center py-6 mb-4">
         <Link to={"/collaborator"} className="text-2xl flex items-center">
           <FaAngleLeft /> Users List
         </Link>
-        <Form layout="inline" className="flex space-x-4">
+        <Form layout="inline" className="md:flex space-x-2 mt-4 md:mt-0">
           <Item name="date">
             <DatePicker
               className="rounded-md border border-[#92b8c0]"
@@ -176,8 +154,12 @@ const Users = () => {
           pagination={{
             position: ["bottomCenter"],
             current: currentPage,
-            onChange: setCurrentPage,
+            pageSize: pageSize,
+            total: data?.data?.attributes?.totalResults, // Total items available for pagination
+            onChange: handlePageChange,
+            showSizeChanger: true, // Allow the user to change the page size
           }}
+          loading={isLoading || isFetching}
           scroll={{ x: "max-content" }}
           responsive={true}
           columns={columns}

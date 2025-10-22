@@ -1,14 +1,25 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../component/Main/Sidebar/Sidebar";
 import Header from "../component/Main/Header/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigation = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  // Check for the token in localStorage whenever the component mounts or the token state changes.
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken || storedToken === "undefined") {
+      // If no token is found, navigate to the auth page
+      navigation("/auth");
+    }
+  }, [navigation]);  // Re-run effect on every navigation change to ensure correct routing
+
   return (
     <main className="w-full h-full flex">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -16,7 +27,7 @@ const MainLayout = () => {
       <section className="w-full h-full md:ml-[200px] lg:ml-[250px] xl:ml-[280px]">
         <Header toggleSidebar={toggleSidebar} />
         <div className="px-4">
-        <Outlet />
+          <Outlet />
         </div>
       </section>
 
@@ -30,4 +41,5 @@ const MainLayout = () => {
     </main>
   );
 };
+
 export default MainLayout;

@@ -1,24 +1,18 @@
 import React, { useState } from "react";
 import { message } from "antd";
 import { FaAngleLeft } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { GoInfo } from "react-icons/go";
+import { useGetSingleUserQuery } from "../../redux/features/user/userApi";
+import Url from "../../redux/baseApi/forImageUrl";
 
 const UserDetails = () => {
-  // Static user data
-  const userDataFull = {
-    id: 1,
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "+1234567890",
-    role: "Admin",
-    createdAt: "2023-01-15T10:30:00Z",
-    isBanned: false, // Active status (change to `true` to simulate blocked)
-    imageUrl: "https://example.com/userimage.png",
-  };
+  const { id } = useParams();
 
-  // Static block/unblock actions (just for simulation)
-  const [isBanned, setIsBanned] = useState(userDataFull.isBanned);
+
+  const { data } = useGetSingleUserQuery({ id });
+  const userData = data?.data?.attributes;
+  console.log(userData);
 
   const handleUserRemove = async () => {
     // Simulate block action
@@ -44,10 +38,10 @@ const UserDetails = () => {
           <div className="flex items-center gap-5">
             <img
               className="w-24 h-24 rounded-full"
-              src={userDataFull.imageUrl || "../../../public/logo/userimage.png"}
+              src={Url + userData.profileImage || "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png"}
               alt="User"
             />
-            <h1 className="text-2xl font-semibold">{userDataFull?.fullName}</h1>
+            <h1 className="text-2xl font-semibold">{userData?.fullName}</h1>
           </div>
         </div>
 
@@ -55,28 +49,24 @@ const UserDetails = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
             <span className="font-semibold">Name</span>
-            <span>{userDataFull?.fullName}</span>
+            <span>{userData?.fullName || "-"}</span>
           </div>
           <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
             <span className="font-semibold">Email</span>
-            <span>{userDataFull?.email}</span>
-          </div>
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
-            <span className="font-semibold">Status</span>
-            <span>{!isBanned ? "Active" : "Blocked"}</span>
+            <span>{userData?.email || "-"}</span>
           </div>
           <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
             <span className="font-semibold">Phone Number</span>
-            <span>{userDataFull?.phoneNumber}</span>
+            <span>{userData?.callingCode} {userData?.phoneNumber || "-"}</span>
           </div>
           <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
             <span className="font-semibold">User Type</span>
-            <span>{userDataFull?.role}</span>
+            <span>{userData?.role || "-"}</span>
           </div>
           <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
             <span className="font-semibold">Joining Date</span>
             <span>
-              {new Date(userDataFull?.createdAt).toLocaleDateString("en-US", {
+              {new Date(userData?.createdAt || "-").toLocaleDateString("en-US", {
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
@@ -85,7 +75,7 @@ const UserDetails = () => {
           </div>
         </div>
 
-        
+
       </div>
     </div>
   );

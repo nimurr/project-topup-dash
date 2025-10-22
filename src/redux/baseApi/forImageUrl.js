@@ -1,3 +1,3 @@
-const Url = 'https://apurbo6000.sobhoy.com'
+const Url = 'https://topup7172.sobhoy.com'
 
 export default Url
