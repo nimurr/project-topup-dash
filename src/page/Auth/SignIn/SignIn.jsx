@@ -59,7 +59,7 @@ const SignIn = () => {
 
         <div className="mt-16 px-10 py-10">
           <div className="mb-8">
-            <img src='/Auth/logo.png' className="w-[150px] mb-5" alt="" />
+            <img src='/Auth/logo.png' className="w-[80px] mb-5" alt="" />
             <h1 className="font-semibold text-3xl text-[#00adb5]">
               Hello, Welcome!
             </h1>

@@ -99,7 +99,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       {/* Desktop Sidebar */}
       <div className="hidden overflow-y-auto md:block w-full md:w-[200px] lg:w-[250px] xl:w-[280px] h-full bg-[#fff] fixed shadow-2xl">
         <Link to={"/"} className="flex flex-col justify-center items-center pt-5 gap-2 bg-white mb-10 text-black">
-          <img src={'/Auth/logo.png'} alt="logo" className="w-[100px] mb-5 " />
+          <img src={'/Auth/logo.png'} alt="logo" className="w-[80px] my-5 " />
         </Link>
         <ul className="flex flex-col gap-5">
           {sidebarItems.map((item) => (
@@ -119,10 +119,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1 font-bold px-10 py-4 text-black  ml-6 mt-5"
+          className="flex items-center gap-1 font-bold px-10 py-4 text-red-600  ml-6 mt-5"
         >
-          <IoIosLogOut className="size-8  p-1 text-white rounded-md" />
-          <span className="text-white">Logout</span>
+          <IoIosLogOut className="size-8  p-1 rounded-md" />
+          <span className="">Logout</span>
         </button>
 
       </div>
@@ -160,7 +160,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           className="flex items-center gap-2 px-10 ml-5 mt-5"
         >
           <IoIosLogOut className="size-8   p-1 text-white rounded-md" />
-          <span className="text-black">Logout</span>
+          <span className="text-white">Logout</span>
         </button>
       </div>
 
