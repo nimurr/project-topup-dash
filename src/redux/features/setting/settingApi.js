@@ -13,7 +13,7 @@ const settingApi = baseApi.injectEndpoints({
 
     updatePrivacyPolicyAll: builder.mutation({  // ✅ FIXED: Use mutation instead of query
       query: (data) => ({
-        url: "/general-info/update/privacy-policy",
+        url: "/info/about-us",
         method: "POST",
         body: data,
       }),

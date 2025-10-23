@@ -17,8 +17,8 @@ const EditPrivacyPolicy = () => {
     console.log("Updated Privacy Policy Content:", content);
 
     try {
-      const res = await updatePrivacyPolicy({ privacyPolicy: content }).unwrap();
-      if (res?.success) {
+      const res = await updatePrivacyPolicy({ content }).unwrap();
+      if (res?.code === 201) {
         message.success(res?.message);
         navigate("/settings/privacy-policy");
       }
