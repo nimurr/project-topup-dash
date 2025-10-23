@@ -44,7 +44,7 @@ const UserDetails = () => {
             <h1 className="text-2xl font-semibold">{userData?.fullName}</h1>
           </div>
         </div>
- 
+
         {/* User Details Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between py-3 border-b border-[#eee]">
@@ -82,3 +82,5 @@ const UserDetails = () => {
 };
 
 export default UserDetails;
+
+// 5340462
