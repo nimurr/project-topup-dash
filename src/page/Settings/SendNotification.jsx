@@ -16,25 +16,27 @@ const SendNotification = () => {
 
     // Function to handle button clicks
     const handleSendToAllUser = () => {
-        message.success('Notification sent to all users');
+        // if (!input1 || !input2) {
+        //     return message.error('Please fill in both Title and Description fields');
+        // }
+        // message.success('Notification sent to all users');
     };
 
     const handleSelectUser = () => {
-        return navigate('/settings/selected-user');
+        if (!input1 || !input2) {
+            return message.error('Please fill in both Title and Description fields');
+        }
+        return navigate(`/settings/selected-user?title=${input1}&description=${input2}`);
     };
 
     return (
         <div className="p-8">
             {/* Setting Section */}
             <div className="mb-6">
-                <Link to="/settings" className="text-2xl font-semibold flex items-center gap-2"> <FaChevronLeft className='text-xl' />Setting</Link>
+                <Link to="/settings" className="text-2xl font-semibold flex items-center gap-2"> <FaChevronLeft className='text-xl' /> Users Notifications </Link>
             </div>
 
-            {/* Notifications Section */}
-            <div className="my-3">
-                <h3 className="text-lg font-medium mb-2">Notifications</h3>
-
-            </div>
+  
 
             {/* Input Fields Section */}
             <div className=" gap-2 grid md:grid-cols-3">
@@ -45,7 +47,7 @@ const SendNotification = () => {
                         placeholder="Enter Title"
                         value={input1}
                         onChange={(e) => setInput1(e.target.value)}
-                        className="w-full py-2 px-4 border rounded bg-gray-100"
+                        className="w-full py-2 px-4 border rounded outline-none right-0 bg-gray-100"
                     />
                 </div>
 
@@ -57,7 +59,7 @@ const SendNotification = () => {
                         value={input2}
                         rows={5}
                         onChange={(e) => setInput2(e.target.value)}
-                        className="w-full py-2 px-4 border rounded bg-gray-100"
+                        className="w-full py-2 px-4 border rounded outline-none right-0 bg-gray-100"
                     />
                 </div>
             </div>

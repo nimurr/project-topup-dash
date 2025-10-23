@@ -15,9 +15,8 @@ const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   const { data: userProfile, refetch } = useGetUserProfileQuery();
+  const user = userProfile?.data?.attributes?.user;
 
-  const user = userProfile?.data;
-  // console.log(user);
 
   useEffect(() => {
     refetch();
@@ -44,15 +43,17 @@ const Header = ({ toggleSidebar }) => {
           </h1>
 
         </Link>
-        <img
-          className="w-12 rounded-full cursor-pointer"
-          src={user?.profileImageUrl ? Url + user?.profileImageUrl : userImage}
-          alt="User Profile"
-        />
-        <div className="hidden md:block">
+        <Link to={`/settings/personal-info`}>
+          <img
+            className="w-12 rounded-full cursor-pointer"
+            src={user?.profileImage ? Url + user?.profileImage : userImage}
+            alt="User Profile"
+          />
+        </Link>
+        {/* <div className="hidden md:block">
           <h1 className="">{user?.fullName}</h1>
           <span className="">{user?.role}</span>
-        </div>
+        </div> */}
       </div>
     </div>
   );

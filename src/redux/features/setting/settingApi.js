@@ -57,7 +57,7 @@ const settingApi = baseApi.injectEndpoints({
 
     getUserProfile: builder.query({
       query: () => ({
-        url: "/get-settings-data",
+        url: "/users/self/in",
         method: "GET",
         providesTags: ["Profile"],
       }),
@@ -65,8 +65,8 @@ const settingApi = baseApi.injectEndpoints({
 
     updateProfile: builder.mutation({
       query: (data) => ({
-        url: "/update-profile",
-        method: "POST",
+        url: "/users/self/update",
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: ["Profile"],
@@ -75,10 +75,19 @@ const settingApi = baseApi.injectEndpoints({
 
     getAllNotification: builder.query({
       query: () => ({
-        url: "/notifications",
+        url: "/info/notifications",
         method: "GET",
         providesTags: ["Notification"],
       }),
+    }),
+
+    sendUserNotification: builder.mutation({
+      query: (data) => ({
+        url: "/info/notifications/manual/send",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Notification"],
     }),
 
 
@@ -99,5 +108,7 @@ export const {
   useGetUserProfileQuery,
   useUpdateProfileMutation,
 
-  useGetAllNotificationQuery
+  useGetAllNotificationQuery,
+  useSendUserNotificationMutation,
+
 } = settingApi;

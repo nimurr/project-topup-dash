@@ -11,9 +11,8 @@ const Personalinfo = () => {
     const navigate = useNavigate();
 
     const { data: userProfile, refetch } = useGetUserProfileQuery();
+    const user = userProfile?.data?.attributes?.user;
 
-    const user = userProfile?.data;
-    console.log(user);
 
     useEffect(() => {
         refetch();
@@ -30,7 +29,7 @@ const Personalinfo = () => {
                 <div className="lg:w-1/3 flex flex-col border border-dotted p-4 justify-center items-center gap-8">
                     <img
                         className="w-40 h-40 border p-2 rounded-full"
-                        src={user?.profileImageUrl ? Url + user?.profileImageUrl : User_Profile}
+                        src={user?.profileImage ? Url + user?.profileImage : User_Profile}
                         alt="User Profile"
                     />
                     <div className="flex flex-col justify-center items-center text-center">
@@ -78,7 +77,7 @@ const Personalinfo = () => {
                             </label>
                             <Input
                                 placeholder="Phone"
-                                value={user?.phoneNumber}// Raw text for phone number
+                                value={ user?.callingCode + user?.phoneNumber}// Raw text for phone number
                                 className="p-4 text-lg md:text-xl bg-[#ebf5f5] rounded w-full mt-3 outline-none"
                                 type="text"
                                 readOnly
@@ -91,7 +90,7 @@ const Personalinfo = () => {
             <div className="flex gap-2 items-center md:justify-end justify-center mt-8">
                 <div
                     onClick={() => navigate(`/settings/personal-info/edit`)}
-                    className="w-48 !bg-[#038c6d] !text-white py-3 px-6 rounded-lg cursor-pointer flex justify-center items-center gap-2"
+                    className="w-48 !bg-[#00adb5] !text-white py-3 px-6 rounded-lg cursor-pointer flex justify-center items-center gap-2"
                 >
                     <FaEdit size={17} />
                     <p>Edit Profile</p>

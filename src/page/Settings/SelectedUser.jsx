@@ -1,28 +1,66 @@
-import React, { useState } from 'react';
-import { Table, Pagination, Checkbox } from 'antd';
-import { TbSend } from 'react-icons/tb';
+import React, { useEffect, useState } from "react";
+import { Table, Checkbox, Button, Pagination, message } from "antd";
+import { TbSend } from "react-icons/tb";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useGetAllUsersQuery } from "../../redux/features/user/userApi";
+import { GoInfo } from "react-icons/go";
+import { Link } from "react-router-dom";
+import { useSendUserNotificationMutation } from "../../redux/features/setting/settingApi";
 
 const SelectedUser = () => {
-    // Sample Data for the Table
-    const data = [
-        { id: 1, name: 'Christopher Brown', email: 'danghoang87h1@gmail.com', phone: '+7 (903) 941-02-27', date: '15 May 2020 9:00 am', amount: '20.00 USD' },
-        { id: 2, name: 'David Anderson', email: 'binhan628@gmail.com', phone: '+7 (903) 840-31-53', date: '15 May 2020 9:30 am', amount: '20.00 USD' },
-        { id: 3, name: 'Thomas Patterson', email: 'vuhaitthuongnute@gmail.com', phone: '+7 (903) 880-93-38', date: '15 May 2020 8:30 am', amount: '20.00 USD' },
-        { id: 4, name: 'Mark Moore', email: 'manhhacht08@gmail.com', phone: '+7 (903) 880-91-85', date: '15 May 2020 8:30 am', amount: '20.00 USD' },
-        { id: 5, name: 'Daniel Bailey', email: 'thuhang.nute@gmail.com', phone: '+7 (903) 134-55-26', date: '15 May 2020 9:00 am', amount: '20.00 USD' },
-        { id: 6, name: 'Robert Thompson', email: 'tranthuy.nute@gmail.com', phone: '+7 (903) 679-96-15', date: '15 May 2020 8:00 am', amount: '20.00 USD' },
-        { id: 7, name: 'Charles Cook', email: 'nvt.isst.nute@gmail.com', phone: '+7 (903) 134-55-26', date: '15 May 2020 9:30 am', amount: '20.00 USD' },
-        { id: 8, name: 'Charles Cook', email: 'nvt.isst.nute@gmail.com', phone: '+7 (903) 134-55-26', date: '15 May 2020 9:30 am', amount: '20.00 USD' },
-        { id: 9, name: 'Charles Cook', email: 'nvt.isst.nute@gmail.com', phone: '+7 (903) 134-55-26', date: '15 May 2020 9:30 am', amount: '20.00 USD' },
-        { id: 10, name: 'Charles Cook', email: 'nvt.isst.nute@gmail.com', phone: '+7 (903) 134-55-26', date: '15 May 2020 9:30 am', amount: '20.00 USD' },
-    ];
+    const [searchParams] = useSearchParams();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
-    // Initialize selected row keys state
+    useEffect(() => {
+        const titleParam = searchParams.get("title");
+        const descriptionParam = searchParams.get("description");
+
+        if (titleParam) setTitle(titleParam);
+        if (descriptionParam) setDescription(descriptionParam);
+    }, [searchParams]);
+
+    const [searchText, setSearchText] = useState("");
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [dataSource, setDataSource] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-    console.log(selectedRowKeys);
+    const { data: user, isLoading, isFetching } = useGetAllUsersQuery({
+        page: currentPage,
+        limit: pageSize,
+    });
 
-    // Handle row selection
+    const usersData = user?.data?.attributes?.results || [];
+
+    // Format user data with fallback values
+    useEffect(() => {
+        if (usersData.length > 0) {
+            const formattedUsers = usersData.map((user, index) => ({
+                id: user.id,
+                si: (currentPage - 1) * pageSize + index + 1,
+                fullName: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim() || "N/A",
+                accountID: user.accountID || "N/A",
+                email: user.email || "N/A",
+                phoneNumber: user.phoneNumber || "N/A",
+                address_line1: user.address_line1 || "N/A",
+                createdAt: user.createdAt ? new Date(user.createdAt).toLocaleString() : "N/A",
+                imageUrl: user.profileImage ? `YOUR_BASE_URL_HERE/${user.profileImage}` : "default_image_url", // Set a default image URL
+                status: user.status || "N/A",
+                gender: user.gender || "N/A",
+            }));
+            setDataSource(formattedUsers);
+        }
+    }, [usersData, currentPage, pageSize]);
+
+    // Handle Page Change
+    const handlePageChange = (page, pageSize) => {
+        setCurrentPage(page);
+        setPageSize(pageSize);
+    };
+
+    // Handle Row Selection
     const handleSelectRow = (id) => {
         const newSelectedRowKeys = [...selectedRowKeys];
         if (newSelectedRowKeys.includes(id)) {
@@ -34,10 +72,10 @@ const SelectedUser = () => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
-    // Handle select all
+    // Handle Select All
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            const allRowKeys = data.map((item) => item.id);
+            const allRowKeys = usersData.map((item) => item.id);
             setSelectedRowKeys(allRowKeys);
         } else {
             setSelectedRowKeys([]);
@@ -45,14 +83,13 @@ const SelectedUser = () => {
     };
 
     // Check if all rows are selected
-    const isAllSelected = selectedRowKeys.length === data.length;
+    const isAllSelected = selectedRowKeys.length === usersData.length;
 
-    // Table Columns
     const columns = [
         {
             title: <Checkbox onChange={handleSelectAll} checked={isAllSelected} />,
-            dataIndex: 'select',
-            key: 'select',
+            dataIndex: "select",
+            key: "select",
             render: (text, record) => (
                 <Checkbox
                     checked={selectedRowKeys.includes(record.id)}
@@ -61,73 +98,110 @@ const SelectedUser = () => {
             ),
         },
         {
-            title: '#ID',
-            dataIndex: 'id',
-            key: 'id',
-            render: (text, record, index) => index + 1, // Auto-increment the ID
+            title: "#SI",
+            dataIndex: "si",
+            key: "si",
+            render: (text, record, index) => index + 1,
         },
         {
-            title: 'User Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: "User Name",
+            dataIndex: "fullName",
+            key: "fullName",
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
         },
         {
-            title: 'Phone Number',
-            dataIndex: 'phone',
-            key: 'phone',
+            title: "Phone Number",
+            dataIndex: "phoneNumber",
+            key: "phoneNumber",
         },
         {
-            title: 'Date & Time',
-            dataIndex: 'date',
-            key: 'date',
+            title: "Joined Date",
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (date) => new Date(date).toLocaleDateString(),
         },
         {
-            title: 'Amount',
-            dataIndex: 'amount',
-            key: 'amount',
+            title: "Action",
+            key: "action",
+            render: (_, record) => (
+                <Link to={`/users/${record.id}`}>
+                    <GoInfo className="text-2xl" />
+                </Link>
+            ),
         },
     ];
 
-    // Pagination logic
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10;
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-
-    // Pagination
+    // Pagination Properties
     const paginationProps = {
         current: currentPage,
         pageSize: pageSize,
-        total: data.length,
+        total: usersData?.length,
         onChange: handlePageChange,
         showSizeChanger: false,
     };
 
+    const [sendUserNotification, { isLoading: isSendingNotification }] = useSendUserNotificationMutation();
+    const navigate = useNavigate();
+
+    const handleSendNotification = async () => {
+        const formData = {
+            userIds: selectedRowKeys,
+            title: title,
+            content: description,
+        };
+
+        try {
+            const response = await sendUserNotification(formData).unwrap();
+
+            if (response.code === 200) {
+                message.success("Notification sent successfully.");
+                setSelectedRowKeys([]); // Clear selection after sending
+                navigate('/settings/send-notification'); // Navigate to notification page
+            } else {
+                message.error("Failed to send notification.");
+            }
+
+        } catch (error) {
+            console.error("Error sending notification:", error);
+            message.error("Failed to send notification.");
+        }
+
+    };
+
     return (
         <div className="sm:p-8 p-2 overflow-x-auto">
-            <div className='flex justify-between mb-5'>
-                <h2 className="text-2xl font-semibold mb-4">Setting</h2>
-                <button disabled={selectedRowKeys.length === 0} className={`text-white py-2 px-10 bg-[#00adb5] rounded flex items-center gap-2 ${selectedRowKeys.length === 0 && 'bg-[#536566] text-gray-400'}`}>Send Notificaiton <TbSend className='text-xl' /></button>
-            </div>
-
-            <div className='min-w-[1000px]'>
+            <div className="min-w-[1000px]">
+                <div className="flex justify-between w-full mb-5">
+                    <h2 className="text-2xl font-semibold mb-4">User Management</h2>
+                    <button
+                        disabled={selectedRowKeys.length === 0}
+                        onClick={handleSendNotification}
+                        className={`text-white py-2 px-10 bg-[#00adb5] rounded flex items-center gap-2 ${selectedRowKeys.length === 0 && 'bg-[#536566] cursor-no-drop text-gray-400'}`}
+                    >
+                        Send Notification {isSendingNotification && '...'} <TbSend className="text-xl" />
+                    </button>
+                </div>
                 <Table
                     columns={columns}
-                    dataSource={data}
-                    pagination={paginationProps}
+                    dataSource={dataSource}
+                    pagination={{
+                        position: ["bottomCenter"],
+                        current: currentPage,
+                        pageSize: pageSize,
+                        total: user?.data?.attributes?.totalResults, // Total items available for pagination
+                        onChange: handlePageChange,
+                        showSizeChanger: true, // Allow the user to change the page size
+
+                    }}
                     rowKey="id"
                     bordered
                     className="mb-6"
                 />
             </div>
-
         </div>
     );
 };

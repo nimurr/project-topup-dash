@@ -38,7 +38,7 @@ const UserDetails = () => {
           <div className="flex items-center gap-5">
             <img
               className="w-24 h-24 rounded-full"
-              src={Url + userData.profileImage || "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png"}
+              src={Url + userData?.profileImage || "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png"}
               alt="User"
             />
             <h1 className="text-2xl font-semibold">{userData?.fullName}</h1>

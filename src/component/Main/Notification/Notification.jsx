@@ -4,9 +4,13 @@ import { FaAngleLeft } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { useGetAllNotificationQuery } from "../../../redux/features/setting/settingApi";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { data } = useGetAllNotificationQuery();
+  console.log(data);
 
   // Static notifications data
   const allNotification = {
