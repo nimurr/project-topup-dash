@@ -4,11 +4,11 @@ import { Button, Form, message } from "antd";
 import ReactQuill from "react-quill"; // Import React Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { useEffect, useState } from "react";
-import { useGetAllSettingsQuery, useUpdateAboutUsMutation } from "../../redux/features/setting/settingApi";
+import { useGetAboutUsQuery, useUpdateAboutUsMutation } from "../../redux/features/setting/settingApi";
 
 const EditAboutUs = () => {
   const [updateAboutUs, { isLoading }] = useUpdateAboutUsMutation();
-  const { data: privacyPolicy, isFetching } = useGetAllSettingsQuery();
+  const { data: privacyPolicy, isFetching } = useGetAboutUsQuery();
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [content, setContent] = useState(""); // State for Quill content
@@ -17,8 +17,8 @@ const EditAboutUs = () => {
 
   // Set default value when API data is available
   useEffect(() => {
-    if (privacyPolicy?.aboutUs) {
-      setContent(privacyPolicy.aboutUs);
+    if (privacyPolicy?.data?.attributes[0]?.content) {
+      setContent(privacyPolicy?.data?.attributes[0]?.content);
     }
   }, [privacyPolicy]);
 
@@ -26,8 +26,8 @@ const EditAboutUs = () => {
     console.log("Updated About Us Content:", content);
 
     try {
-      const res = await updateAboutUs({ aboutUs: content }).unwrap();
-      if (res?.success) {
+      const res = await updateAboutUs({ content }).unwrap();
+      if (res?.code === 201) {
         message.success(res?.message);
         navigate("/settings/about-us");
       }

@@ -35,7 +35,7 @@ const EditPrivacyPolicy = () => {
       <div className="flex justify-between items-center py-5">
         <Link to="/settings" className="flex gap-4 items-center">
           <IoChevronBack className="text-2xl" />
-          <h1 className="text-2xl font-semibold">Privacy Policy</h1>
+          <h1 className="text-2xl font-semibold">Edit Privacy Policy</h1>
         </Link>
       </div>
 

@@ -51,10 +51,10 @@ const Settings = () => {
       title: "About us",
       path: "about-us",
     },
-    {
-      title: "Feedbacks",
-      path: "feedback",
-    },
+    // {
+    //   title: "Feedbacks",
+    //   path: "feedback",
+    // },
     {
       title: "FAQ",
       path: "all-faq",

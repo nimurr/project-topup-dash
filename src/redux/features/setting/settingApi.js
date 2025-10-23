@@ -13,7 +13,7 @@ const settingApi = baseApi.injectEndpoints({
 
     updatePrivacyPolicyAll: builder.mutation({  // ✅ FIXED: Use mutation instead of query
       query: (data) => ({
-        url: "/info/about-us",
+        url: "/info/privacy-policy",
         method: "POST",
         body: data,
       }),
@@ -21,7 +21,7 @@ const settingApi = baseApi.injectEndpoints({
     }),
     getPrivacyPolicy: builder.query({
       query: () => ({
-        url: "/info/about-us",
+        url: "/info/privacy-policy",
         method: "GET",
         providesTags: ["Setting"],
       }),
@@ -43,6 +43,23 @@ const settingApi = baseApi.injectEndpoints({
       invalidatesTags: ["Setting"],
     }),
 
+    getAboutUs: builder.query({
+      query: () => ({
+        url: "/info/about-us",
+        method: "GET",
+        providesTags: ["Setting"],
+      }),
+    }),
+
+    updateAboutUs: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: "/info/about-us",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+
 
 
     addFaqMain: builder.mutation({  // ✅ FIXED: Use mutation instead of query
@@ -52,24 +69,7 @@ const settingApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
-    deleteFaq: builder.mutation({  // ✅ FIXED: Use mutation instead of query
-      query: (data) => ({
-        url: `/general-info/delete-faq`,
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Setting"],
-    }),
 
-
-    updateAboutUs: builder.mutation({  // ✅ FIXED: Use mutation instead of query
-      query: (data) => ({
-        url: "/general-info/update/about-us",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Setting"],
-    }),
 
 
     getUserProfile: builder.query({
@@ -108,6 +108,30 @@ const settingApi = baseApi.injectEndpoints({
     }),
 
 
+    getAllFaq: builder.query({
+      query: () => ({
+        url: "/faq",
+        method: "GET",
+        providesTags: ["Setting"],
+      }),
+    }),
+    updateFaq: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: ({ id, data }) => ({
+        url: `/faq/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+    deleteFaq: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (id) => ({
+        url: `/faq/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+
+
 
 
   }),
@@ -121,6 +145,8 @@ export const {
   useGatTermsAndConditionsQuery,
   useUpdateTramsAndConditionsAllMutation,
 
+  useGetAboutUsQuery,
+
   useAddFaqMainMutation,
   useDeleteFaqMutation,
 
@@ -130,5 +156,8 @@ export const {
 
   useGetAllNotificationQuery,
   useSendUserNotificationMutation,
+
+  useGetAllFaqQuery,
+  useUpdateFaqMutation
 
 } = settingApi;
