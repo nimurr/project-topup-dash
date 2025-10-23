@@ -66,7 +66,7 @@ const OffersAndFees = () => {
         }
 
         const promoCodeData = {
-            referralCode: promoCode,
+            // referralCode: promoCode,
             percentage: promoCodeValue,
             status: promoCodeStatus,
             type: promoCodeType,
@@ -75,9 +75,11 @@ const OffersAndFees = () => {
             amount,
         };
 
+        console.log(promoCode);
+
         try {
-            const res = await updatePromoCode({ id: selectedPromoCodeId, ...promoCodeData }).unwrap();
-            console.log(res);
+            const res = await updatePromoCode({ id: promoCode, data: promoCodeData }).unwrap();
+            console.log(res?.data?.attributes);
             if (res.code === 200) {
                 message.success(res?.message || 'Promo code updated successfully');
                 setIsModalVisible(false);

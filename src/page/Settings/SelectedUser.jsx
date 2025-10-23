@@ -174,6 +174,10 @@ const SelectedUser = () => {
 
     return (
         <div className="sm:p-8 p-2 overflow-x-auto">
+            <div className="mb-2 capitalize">
+                <h2> Title :- {title}</h2>
+                <h2> Description :- {description}</h2>
+            </div>
             <div className="min-w-[1000px]">
                 <div className="flex justify-between w-full mb-5">
                     <h2 className="text-2xl font-semibold mb-4">User Management</h2>

@@ -66,9 +66,9 @@ const SendNotification = () => {
 
             {/* Action Buttons */}
             <div className="mt-8 flex justify-end gap-2">
-                <button onClick={handleSendToAllUser} className="bg-[#00adb5] text-white py-3 px-6 rounded-lg text-base font-semibold">
+                {/* <button onClick={handleSendToAllUser} className="bg-[#00adb5] text-white py-3 px-6 rounded-lg text-base font-semibold">
                     Send To All User
-                </button>
+                </button> */}
                 <button onClick={handleSelectUser} className="bg-[#00adb5] text-white border-2 border-[#00adb5] py-3 px-6 rounded-lg text-base font-semibold">
                     Select User
                 </button>

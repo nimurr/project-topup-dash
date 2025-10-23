@@ -32,6 +32,22 @@ export const offerFeesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['OfferFees'],
         }),
+
+        gerAllFees: builder.query({
+            query: () => ({
+                url: '/info/fees',
+                method: 'GET',
+            }),
+            providesTags: ['OfferFees'],
+        }),
+        updateFees: builder.mutation({
+            query: (data) => ({
+                url: '/info/fees',
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['OfferFees'],
+        }),
     }),
 });
 
@@ -39,6 +55,8 @@ export const {
     useGetAllPromoCodeListQuery,
     useCreatePromoCodeMutation,
     useDeletePromoCodeMutation,
-    useUpdatePromoCodeMutation
+    useUpdatePromoCodeMutation,
+    useGerAllFeesQuery,
+    useUpdateFeesMutation,
 
 } = offerFeesApi;
