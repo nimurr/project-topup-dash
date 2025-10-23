@@ -26,9 +26,9 @@ const EditTermsConditions = () => {
     // Handle form submission, e.g., update the Terms and Conditions in the backend
 
     try {
-      const res = await updateTramsAndCondition({ termsAndConditions: content }).unwrap();
+      const res = await updateTramsAndCondition({ content }).unwrap();
       console.log(res);
-      if (res?.success) {
+      if (res?.code === 201) {
         message.success(res?.message);
         navigate("/settings/terms-conditions");
       }

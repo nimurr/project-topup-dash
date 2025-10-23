@@ -4,14 +4,14 @@ import { TbEdit } from "react-icons/tb";
 import CustomButton from "../../utils/CustomButton";
 import { Spin } from "antd"; // Importing Spin
 import { useEffect } from "react";
-import { useGetAllSettingsQuery } from "../../redux/features/setting/settingApi";
+import { useGatTermsAndConditionsQuery } from "../../redux/features/setting/settingApi";
 
 const TermsconditionPage = () => {
 
 
-  const { data: privacyPolicy, isLoading, refetch } = useGetAllSettingsQuery();
+  const { data: privacyPolicy, isLoading, refetch } = useGatTermsAndConditionsQuery();
 
-  console.log(privacyPolicy?.termsAndConditions);
+  console.log(privacyPolicy?.data?.attributes[0]?.content);
 
   useEffect(() => {
     refetch();
@@ -46,7 +46,7 @@ const TermsconditionPage = () => {
         :
         (
           <div className="w-full h-full ml-3">
-            <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.termsAndConditions }} />
+            <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.data?.attributes[0]?.content }} />
           </div>
         )
       }
