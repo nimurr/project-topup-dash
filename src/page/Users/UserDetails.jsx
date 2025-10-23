@@ -47,23 +47,23 @@ const UserDetails = () => {
 
         {/* User Details Section */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">Name</span>
             <span>{userData?.fullName || "-"}</span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">Email</span>
             <span>{userData?.email || "-"}</span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">Phone Number</span>
             <span>{userData?.callingCode} {userData?.phoneNumber || "-"}</span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">User Type</span>
             <span>{userData?.role || "-"}</span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b-2 border-[#00000042]">
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">Joining Date</span>
             <span>
               {new Date(userData?.createdAt || "-").toLocaleDateString("en-US", {

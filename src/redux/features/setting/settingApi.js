@@ -62,13 +62,6 @@ const settingApi = baseApi.injectEndpoints({
 
 
 
-    addFaqMain: builder.mutation({  // ✅ FIXED: Use mutation instead of query
-      query: (data) => ({
-        url: "/general-info/add-new-faq",
-        method: "POST",
-        body: data,
-      }),
-    }),
 
 
 
@@ -108,6 +101,14 @@ const settingApi = baseApi.injectEndpoints({
     }),
 
 
+
+    addFaqMain: builder.mutation({  // ✅ FIXED: Use mutation instead of query
+      query: (data) => ({
+        url: "/faq",
+        method: "POST",
+        body: data,
+      }),
+    }),
     getAllFaq: builder.query({
       query: () => ({
         url: "/faq",

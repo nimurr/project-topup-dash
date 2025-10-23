@@ -38,27 +38,29 @@ const AllFaq = () => {
             const res = await addFaq(values).unwrap();
             console.log(res);
 
-            if (res?.success) {
-                notification.success({
-                    message: 'FAQ Added Successfully!',
-                });
+            if (res?.code === 201) {
+                message.success(res?.message);
                 refetch();
                 setIsModalVisible(false);
                 form.resetFields();  // Reset the form fields
             }
+            else {
+                message.error(res?.message);
+            }
         } catch (error) {
             console.log(error);
+            message.error(error?.data?.message);
         }
     };
 
     const handleDelete = async (faq) => {
+        const id = faq?.id;
+
         try {
-            const res = await faqsDelete({ question: faq?.question });
+            const res = await faqsDelete(id).unwrap();
             console.log(res);
-            if (res?.data?.success) {
-                notification.success({
-                    message: 'FAQ Deleted Successfully!',
-                });
+            if (res?.code === 200) {
+                message.success(res?.message);
                 refetch();
             }
         } catch (error) {
@@ -113,8 +115,8 @@ const AllFaq = () => {
             </div>
 
             {/* List of FAQs */}
-            <div className="mt-5 md:px-8 px-3">
-                <div className="my-5">
+            <div className=" px-3">
+                <div className="my-5 space-y-2">
                     {allFaq?.map((faq, index) => (
                         <div key={index} className="flex items-start gap-3 border border-[#00adb5] p-3 rounded-lg justify-between py-5">
                             <div>
