@@ -19,6 +19,13 @@ const settingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Setting"],
     }),
+    getPrivacyPolicy: builder.query({
+      query: () => ({
+        url: "/info/about-us",
+        method: "GET",
+        providesTags: ["Setting"],
+      }),
+    }),
 
 
     addFaqMain: builder.mutation({  // ✅ FIXED: Use mutation instead of query
@@ -99,6 +106,7 @@ const settingApi = baseApi.injectEndpoints({
 export const {
   useGetAllSettingsQuery,
   useUpdatePrivacyPolicyAllMutation, // ✅ FIXED: Mutation hook 
+  useGetPrivacyPolicyQuery,
   useUpdateTramsAndConditionsAllMutation,
 
   useAddFaqMainMutation,

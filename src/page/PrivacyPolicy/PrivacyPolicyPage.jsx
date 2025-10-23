@@ -3,14 +3,14 @@ import { TbEdit } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import CustomButton from "../../utils/CustomButton";
 import { Spin } from "antd"; // Importing Spin  
-import { useGetAllSettingsQuery } from "../../redux/features/setting/settingApi";
+import { useGetPrivacyPolicyQuery } from "../../redux/features/setting/settingApi";
 import { useEffect } from "react";
 
 const PrivacyPolicyPage = () => {
 
-  const { data: privacyPolicy, isLoading, refetch } = useGetAllSettingsQuery();
+  const { data: privacyPolicy, isLoading, refetch } = useGetPrivacyPolicyQuery();
 
-  console.log(privacyPolicy);
+  console.log(privacyPolicy?.data?.attributes[0]?.content);
 
   useEffect(() => {
     refetch();
@@ -42,7 +42,7 @@ const PrivacyPolicyPage = () => {
         </div>
       ) : (
         <div className="w-full h-full ml-3">
-          <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.privacyPolicy }} />
+          <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.data?.attributes[0]?.content }} />
 
         </div>
       )}

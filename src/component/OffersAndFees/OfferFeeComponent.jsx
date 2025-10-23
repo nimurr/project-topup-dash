@@ -39,10 +39,25 @@ const OfferFeeComponent = () => {
             return;
         }
 
-        const updatedFee = {
+        const updatedFeeforStripe = {
             type: feeType,
             stripePercentageFee: stripePercentageFee,
         };
+
+        const updatedFeeForgiftCard = {
+            type: feeType,
+            giftCardFee: stripePercentageFee,
+        }
+
+        const updatedFeeFortopUp = {
+            type: feeType,
+            topUpFees: stripePercentageFee,
+        }
+
+        const updatedFee = feeType === 'stripe' ? updatedFeeforStripe : feeType === 'giftCard' ? updatedFeeForgiftCard : updatedFeeFortopUp
+
+        console.log(updatedFee);
+
 
         try {
             // Call the mutation to update the fee
@@ -66,14 +81,14 @@ const OfferFeeComponent = () => {
                         border={1}
                         className="w-full !border-2 !rounded-lg border-[#F0F9FF] table-auto text-left border-collapse"
                     >
-                        <thead>
+                        <thead className='bg-[#00adb5] text-white overflow-hidden rounded-lg'>
                             <tr className="border-b border-[#F0F9FF]">
-                                <th className="py-2 px-4 text-base font-semibold">Stripe Percentage Fee</th>
-                                <th className="py-2 px-4 text-base font-semibold">Top-Up Fee</th>
-                                <th className="py-2 px-4 text-base font-semibold">Gift Card Fee</th>
-                                <th className="py-2 px-4 text-base font-semibold">Status</th>
-                                <th className="py-2 px-4 text-base font-semibold">Created At</th>
-                                <th className="py-2 px-4 text-base font-semibold">Action</th>
+                                <th className="py-3 px-4 text-base font-semibold">Stripe Percentage Fee</th>
+                                <th className="py-3 px-4 text-base font-semibold">Top-Up Fee</th>
+                                <th className="py-3 px-4 text-base font-semibold">Gift Card Fee</th>
+                                <th className="py-3 px-4 text-base font-semibold">Status</th>
+                                <th className="py-3 px-4 text-base font-semibold">Created At</th>
+                                <th className="py-3 px-4 text-base font-semibold">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,8 +96,8 @@ const OfferFeeComponent = () => {
                                 fullData?.map((fee) => (
                                     <tr key={fee.id} className="border-b capitalize border-[#F0F9FF]">
                                         <td className="py-2 px-4">{fee.stripePercentageFee}%</td>
-                                        <td className="py-2 px-4">{fee.topUpFees}</td>
-                                        <td className="py-2 px-4">{fee.giftCardFee}</td>
+                                        <td className="py-2 px-4">{fee.topUpFees}%</td>
+                                        <td className="py-2 px-4">{fee.giftCardFee}%</td>
                                         <td className="py-2 px-4">{fee.status}</td>
                                         <td className="py-2 px-4">{moment(fee.createdAt).format('YYYY-MM-DD')}</td>
                                         <td className="py-2 px-4 flex items-center gap-3">
@@ -104,6 +119,11 @@ const OfferFeeComponent = () => {
                             }
                         </tbody>
                     </table>
+                    <div>
+                        {
+                            isLoading && <h1 className='text-3xl font-semibold text-center text-blue-600 flex items-center justify-center'>Loading...</h1>
+                        }
+                    </div>
                 </div>
             </div>
 
@@ -115,8 +135,8 @@ const OfferFeeComponent = () => {
             >
                 <div className="space-y-3 mt-5">
                     <p className="text-base flex justify-between"><strong>Stripe Percentage Fee:</strong> {selectedFee?.stripePercentageFee}%</p>
-                    <p className="text-base flex justify-between"><strong>Top-Up Fee:</strong> {selectedFee?.topUpFees}</p>
-                    <p className="text-base flex justify-between"><strong>Gift Card Fee:</strong> {selectedFee?.giftCardFee}</p>
+                    <p className="text-base flex justify-between"><strong>Top-Up Fee:</strong> {selectedFee?.topUpFees}%</p>
+                    <p className="text-base flex justify-between"><strong>Gift Card Fee:</strong> {selectedFee?.giftCardFee}%</p>
                     <p className="text-base flex justify-between"><strong>Status:</strong> {selectedFee?.status}</p>
                     <p className="text-base flex justify-between"><strong>Created At:</strong> {new Date(selectedFee?.createdAt).toLocaleString()}</p>
                 </div>
