@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Input, message, Button, Select, DatePicker, Radio } from 'antd';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
-import { useCreatePromoCodeMutation, useDeletePromoCodeMutation, useGetAllPromoCodeListQuery } from '../../redux/features/offerFees/offerFees';
+import { useCreatePromoCodeMutation, useDeletePromoCodeMutation, useGetAllPromoCodeListQuery, useUpdatePromoCodeMutation } from '../../redux/features/offerFees/offerFees';
 import moment from 'moment';
 import { MdOutlineDeleteForever } from 'react-icons/md';
+import OfferFeeComponent from './OfferFeeComponent';
 
 const OffersAndFees = () => {
     const { data } = useGetAllPromoCodeListQuery();
@@ -11,6 +12,7 @@ const OffersAndFees = () => {
 
     const [selectedOption, setSelectedOption] = useState('1');
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);  // New state to check edit mode
     const [promoCodeType, setPromoCodeType] = useState('top-up');
     const [promoCode, setPromoCode] = useState('');
     const [promoCodeValue, setPromoCodeValue] = useState('');
@@ -18,16 +20,19 @@ const OffersAndFees = () => {
     const [expiresAt, setExpiresAt] = useState(null);
     const [usageLimit, setUsageLimit] = useState('');
     const [amount, setAmount] = useState('');
+    const [selectedPromoCodeId, setSelectedPromoCodeId] = useState(null);  // Store selected promo code id
+
+    // Mutations
+    const [createPromoCode] = useCreatePromoCodeMutation();
+    const [updatePromoCode] = useUpdatePromoCodeMutation();
 
     // Handle form submission for new promo code
-
-    const [createPromoCode] = useCreatePromoCodeMutation();
-
     const handleCreatePromoCode = async () => {
         if (!promoCode || !promoCodeValue || !promoCodeStatus || !expiresAt || !usageLimit) {
             message.error('Please fill in all required fields');
             return;
         }
+
         const promoCodeData = {
             referralCode: promoCode,
             percentage: promoCodeValue,
@@ -44,123 +49,96 @@ const OffersAndFees = () => {
             if (res.code === 201) {
                 message.success(res?.message || 'Promo code created successfully');
                 setIsModalVisible(false);
-            }
-            else {
+            } else {
                 message.error(res?.message || 'Failed to create promo code');
             }
         } catch (error) {
             console.log(error?.data?.message);
             message.error(error?.data?.message || 'Failed to create promo code');
+        }
+    };
+
+    // Handle form submission for editing an existing promo code
+    const handleUpdatePromoCode = async () => {
+        if (!promoCode || !promoCodeValue || !promoCodeStatus || !expiresAt || !usageLimit) {
+            message.error('Please fill in all required fields');
             return;
+        }
+
+        const promoCodeData = {
+            referralCode: promoCode,
+            percentage: promoCodeValue,
+            status: promoCodeStatus,
+            type: promoCodeType,
+            expiresAt: moment(expiresAt).format('YYYY-MM-DD'),
+            usageLimit,
+            amount,
+        };
+
+        try {
+            const res = await updatePromoCode({ id: selectedPromoCodeId, ...promoCodeData }).unwrap();
+            console.log(res);
+            if (res.code === 200) {
+                message.success(res?.message || 'Promo code updated successfully');
+                setIsModalVisible(false);
+            } else {
+                message.error(res?.message || 'Failed to update promo code');
+            }
+        } catch (error) {
+            console.log(error?.data?.message);
+            message.error(error?.data?.message || 'Failed to update promo code');
         }
     };
 
     const [deletePromoCode] = useDeletePromoCodeMutation();
 
     const handleDelete = async (id) => {
-        // Call delete mutation here
         try {
             const res = await deletePromoCode(id).unwrap();
             console.log(res);
             if (res.code === 200) {
                 message.success(res?.message || 'Promo code deleted successfully');
-            }
-            else {
+            } else {
                 message.error(res?.message || 'Failed to delete promo code');
             }
-
         } catch (error) {
             console.log(error);
             message.error(error?.data?.message || 'Failed to delete promo code');
         }
+    };
 
-    }
+    // Open modal for creating or editing a promo code
+    const openModal = (promoCodeId = null) => {
+        if (promoCodeId) {
+            // Editing a promo code
+            const promo = fullData.find(item => item.referralCode === promoCodeId);
+            setPromoCode(promo.referralCode);
+            setPromoCodeValue(promo.percentage);
+            setPromoCodeStatus(promo.status);
+            setPromoCodeType(promo.type);
+            setExpiresAt(moment(promo.expiresAt));
+            setUsageLimit(promo.usageLimit);
+            setAmount(promo.amount || '');
+            setSelectedPromoCodeId(promoCodeId);  // Set selected promo code ID
+            setIsEditMode(true);
+        } else {
+            // Creating a new promo code
+            setPromoCode('');
+            setPromoCodeValue('');
+            setPromoCodeStatus('active');
+            setPromoCodeType('top-up');
+            setExpiresAt(null);
+            setUsageLimit('');
+            setAmount('');
+            setIsEditMode(false);
+        }
 
+        setIsModalVisible(true);
+    };
 
     return (
         <div className="lg:p-8 overflow-x-auto">
-            <div className="mb-8">
-                <h2 className="text-2xl font-semibold">Offers & Fees</h2>
-                <p className="text-sm text-gray-500">Set your commission for top-ups and gift cards</p>
-
-                <div className="mt-4 rounded-lg grid md:grid-cols-3 gap-2">
-                    <table className="w-full bg-[#F0F9FF] table-auto text-left md:col-span-1 rounded-lg text-base">
-                        <thead>
-                            <tr>
-                                <th className="py-2 px-4 text-base font-semibold">Fee Type</th>
-                                <th className="py-2 px-4 text-base font-semibold text-center">Percentage Input (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Top-Up Fee Row */}
-                            <tr>
-                                <td className="py-2 px-4">Top-Up Fee</td>
-                                <td className="py-2 px-4">
-                                    <input
-                                        type="text"
-                                        className="bg-[#ffffff] py-2 ring-0 focus:outline-none w-full text-center"
-                                        defaultValue={5}
-                                    />
-                                </td>
-                            </tr>
-
-                            {/* Gift Card Fee Row */}
-                            <tr>
-                                <td className="py-2 px-4">Gift Card Fee</td>
-                                <td className="py-2 px-4">
-                                    <input
-                                        type="text"
-                                        className="bg-[#ffffff] py-2 ring-0 focus:outline-none w-full text-center"
-                                        defaultValue={10}
-                                    />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <table
-                        border={1}
-                        className="w-full md:col-span-2 !border-2 !rounded-lg border-[#F0F9FF] table-auto text-left border-collapse"
-                    >
-                        <thead>
-                            <tr className="border-b border-[#F0F9FF]">
-                                <th className="py-2 px-4 text-base font-semibold">Fee Type</th>
-                                <th className="py-2 px-4 text-base font-semibold">Percentage Input (%)</th>
-                                <th className="py-2 px-4 text-base font-semibold">Transaction Amount</th>
-                                <th className="py-2 px-4 text-base font-semibold">Fee Percentage</th>
-                                <th className="py-2 px-4 text-base font-semibold">Total Price</th>
-                                <th className="py-2 px-4 text-base font-semibold">Your Earnings</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Top-Up Fee Row */}
-                            <tr className="bg-white border-b border-[#F0F9FF]">
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">Top-Up Fee</td>
-                                <td className="py-2 px-4 text-center border-r border-[#F0F9FF]">5</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">$100 Top-Up</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">5%</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">
-                                    $100
-                                </td>
-                                <td className="py-2 px-4">$451</td>
-                            </tr>
-
-                            {/* Gift Card Fee Row */}
-                            <tr className="bg-white">
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">Gift Card Fee</td>
-                                <td className="py-2 px-4 text-center border-r border-[#F0F9FF]">10</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">$100 Gift Card</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">10%</td>
-                                <td className="py-2 px-4 border-r border-[#F0F9FF]">
-                                    $100
-                                </td>
-                                <td className="py-2 px-4">$451</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+            <OfferFeeComponent />
 
             <div>
                 <h2 className="text-2xl font-semibold">Promo Code</h2>
@@ -188,7 +166,13 @@ const OffersAndFees = () => {
                                     <td className="py-3 px-4">
                                         {moment(item?.expiresAt).format('dddd, MMMM Do YYYY')}
                                     </td>
-                                    <td className="py-3 px-4">
+                                    <td className="py-3 flex items-center gap-2 px-4">
+                                        <button
+                                            onClick={() => openModal(item?.referralCode)}
+                                            className="text-blue-500 mr-2"
+                                        >
+                                            Edit
+                                        </button>
                                         <button onClick={() => handleDelete(item?.referralCode)} className="text-red-500">
                                             <MdOutlineDeleteForever className="text-3xl" />
                                         </button>
@@ -203,16 +187,16 @@ const OffersAndFees = () => {
                 <div className="mt-4">
                     <button
                         className="bg-[#00ADB5] text-white py-2 px-6 rounded-lg"
-                        onClick={() => setIsModalVisible(true)}
+                        onClick={() => openModal()}  // Open for new promo code
                     >
                         Create New
                     </button>
                 </div>
             </div>
 
-            {/* Modal for creating a new promo code */}
+            {/* Modal for creating or editing a promo code */}
             <Modal
-                title="Create New Promo Code"
+                title={isEditMode ? 'Edit Promo Code' : 'Create New Promo Code'}
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
@@ -221,7 +205,7 @@ const OffersAndFees = () => {
                     <div>
                         <label className="block text-sm font-medium">Promo Code Type</label>
                         <Select
-                            className="w-full  h-10  rounded "
+                            className="w-full h-10 rounded"
                             value={promoCodeType}
                             onChange={setPromoCodeType}
                         >
@@ -235,7 +219,7 @@ const OffersAndFees = () => {
                         <label className="block text-sm font-medium">Promo Code</label>
                         <Input
                             placeholder="Promo Code"
-                            className='py-2'
+                            className="py-2"
                             value={promoCode}
                             onChange={(e) => setPromoCode(e.target.value)}
                         />
@@ -245,7 +229,7 @@ const OffersAndFees = () => {
                         <label className="block text-sm font-medium">Promo Code Value</label>
                         <Input
                             type="number"
-                            className='py-2'
+                            className="py-2"
                             placeholder="Promo Code Value"
                             value={promoCodeValue}
                             onChange={(e) => setPromoCodeValue(e.target.value)}
@@ -275,7 +259,7 @@ const OffersAndFees = () => {
                         <label className="block text-sm font-medium">Usage Limit</label>
                         <Input
                             type="number"
-                            className='py-2'
+                            className="py-2"
                             placeholder="Usage Limit"
                             value={usageLimit}
                             onChange={(e) => setUsageLimit(e.target.value)}
@@ -286,7 +270,7 @@ const OffersAndFees = () => {
                         <label className="block text-sm font-medium">Amount (optional)</label>
                         <Input
                             type="number"
-                            className='py-2'
+                            className="py-2"
                             placeholder="Amount"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
@@ -297,8 +281,11 @@ const OffersAndFees = () => {
                         <Button onClick={() => setIsModalVisible(false)} className="bg-red-500 h-10 px-8 text-white">
                             Cancel
                         </Button>
-                        <Button onClick={handleCreatePromoCode} className="bg-[#00ADB5] h-10 px-8 text-white">
-                            Create
+                        <Button
+                            onClick={isEditMode ? handleUpdatePromoCode : handleCreatePromoCode}
+                            className="bg-[#00ADB5] h-10 px-8 text-white"
+                        >
+                            {isEditMode ? 'Update' : 'Create'}
                         </Button>
                     </div>
                 </div>

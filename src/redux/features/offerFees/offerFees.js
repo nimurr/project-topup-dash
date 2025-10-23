@@ -24,10 +24,21 @@ export const offerFeesApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['OfferFees'],
         }),
+        updatePromoCode: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `/copon/update/${id}`,
+                method: 'PATCH',
+                body: data,
+            }),
+            invalidatesTags: ['OfferFees'],
+        }),
     }),
 });
 
-export const { 
-    useGetAllPromoCodeListQuery, 
-    useCreatePromoCodeMutation, 
-    useDeletePromoCodeMutation } = offerFeesApi;
+export const {
+    useGetAllPromoCodeListQuery,
+    useCreatePromoCodeMutation,
+    useDeletePromoCodeMutation,
+    useUpdatePromoCodeMutation
+
+} = offerFeesApi;

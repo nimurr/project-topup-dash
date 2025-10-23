@@ -34,11 +34,11 @@ const sidebarItems = [
     name: "Transactions",
     icon: <AiFillDollarCircle className="size-6" />,
   },
-  {
-    path: "/pubg-uc",
-    name: "Pubg UC",
-    icon: '/homepage/navIitem.png',
-  },
+  // {
+  //   path: "/pubg-uc",
+  //   name: "Pubg UC",
+  //   icon: '/homepage/navIitem.png',
+  // },
   {
     path: "/offers-fees",
     name: "Offers & Fees",
@@ -47,36 +47,7 @@ const sidebarItems = [
 
 
 
-  // {
-  //   path: "/user-request",
-  //   name: "Super User Request",
-  //   icon: <FaBriefcase className="size-6" />,
-  // },
-  // {
-  //   path: "/allevent",
-  //   name: "All Tournament",
-  //   icon: <FaBriefcase className="size-6" />,
-  // },
-  // {
-  //   path: "/subscription",
-  //   name: "Subscription",
-  //   icon: <FaCopy className="size-6" />,
-  // },
-  // {
-  //   path: "/earnings",
-  //   name: "Earnings",
-  //   icon: <FaSackDollar className="size-6" />,
-  // },
-  // {
-  //   path: "/suggestion",
-  //   name: "Suggestion",
-  //   icon: <HiLightBulb className="size-8" />,
-  // },
-  // {
-  //   path: "/Donation",
-  //   name: "Donation",
-  //   icon: <RiMoneyDollarCircleFill className="size-6" />,
-  // },
+
   {
     path: "/settings",
     name: "Settings",
