@@ -19,5 +19,8 @@ const dashboardApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetDashboardStatusQuery, useGetIncomeRatioQuery } =
+export const {
+  useGetDashboardStatusQuery,
+  useGetIncomeRatioQuery
+} =
   dashboardApi;
