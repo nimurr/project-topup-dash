@@ -1,93 +1,46 @@
-import { Pagination } from "antd";
+import { message, Pagination } from "antd";
 import { useState } from "react";
 import { FaAngleLeft } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { useGetAllNotificationQuery } from "../../../redux/features/setting/settingApi";
+import { useGetAllNotificationQuery, useReadNotificationMutation } from "../../../redux/features/setting/settingApi";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
-
-  const { data } = useGetAllNotificationQuery();
-  console.log(data);
-
-  // Static notifications data
-  const allNotification = {
-    notifications: [
-      {
-        id: 1,
-        message: "Your subscription has been activated.",
-        createdAt: "2023-04-01T10:30:00Z",
-      },
-      {
-        id: 2,
-        message: "You have a new message from John Doe.",
-        createdAt: "2023-04-02T12:15:00Z",
-      },
-      {
-        id: 3,
-        message: "Your profile has been updated successfully.",
-        createdAt: "2023-04-03T09:00:00Z",
-      },
-      {
-        id: 4,
-        message: "New login from an unrecognized device.",
-        createdAt: "2023-04-04T11:45:00Z",
-      },
-      {
-        id: 5,
-        message: "Password change requested.",
-        createdAt: "2023-04-05T08:30:00Z",
-      },
-      {
-        id: 6,
-        message: "Your account balance is low.",
-        createdAt: "2023-04-06T14:00:00Z",
-      },
-      {
-        id: 7,
-        message: "You have a new friend request.",
-        createdAt: "2023-04-07T17:30:00Z",
-      },
-      {
-        id: 8,
-        message: "Event reminder: Meeting tomorrow at 10 AM.",
-        createdAt: "2023-04-08T07:15:00Z",
-      },
-      {
-        id: 9,
-        message: "Your document has been approved.",
-        createdAt: "2023-04-09T13:00:00Z",
-      },
-      {
-        id: 10,
-        message: "Your recent purchase has been shipped.",
-        createdAt: "2023-04-10T15:00:00Z",
-      },
-      {
-        id: 11,
-        message: "You have a new notification in the app.",
-        createdAt: "2023-04-11T16:30:00Z",
-      },
-      {
-        id: 12,
-        message: "Security alert: New device login detected.",
-        createdAt: "2023-04-12T19:00:00Z",
-      },
-    ],
-  };
-
-  const pageSize = 10;
+  const { data, isLoading, refetch } = useGetAllNotificationQuery();
+  const pageSize = 25;
 
   // Pagination Logic
-  const paginatedNotifications = allNotification?.notifications.slice(
+  const paginatedNotifications = data?.data?.attributes?.notifications?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
   const onPageChange = (page) => {
     setCurrentPage(page);
+  };
+
+
+  const [readNotification, { isLoading: isReadLoading }] = useReadNotificationMutation();
+
+  const handleRead = async (id) => {
+    const data = { notificationId: id };
+    console.log(id);
+    try {
+      const res = await readNotification(data).unwrap();
+      console.log(res);
+      if (res?.code === 200) {
+        message.success(res?.message);
+        refetch();
+      }
+      else {
+        message.error(res?.message);
+      }
+
+    } catch (error) {
+      message.error(error?.data?.message);
+    }
   };
 
   return (
@@ -97,17 +50,21 @@ const Notification = () => {
       </Link>
 
       <div className="space-y-4">
+        {
+          isLoading && <p className="text-center text-[#00adb5] pb-5">Loading...</p>
+        }
         {paginatedNotifications?.map((item) => (
           <div
-            key={item.id}
-            className="border border-[#00adb5] hover:bg-[#b0e6e8d2] cursor-pointer rounded-md p-4 flex items-center space-x-4"
+            key={item._id}
+            onClick={() => handleRead(item?._id)}
+            className={`border ${item?.status === "unread" ? "border-[#00adb5] hover:bg-[#b0e6e8d2]" : ""} cursor-pointer rounded-md p-4 flex items-center space-x-4`}
           >
-            <div className="text-[#00adb5] border border-[#00adb5] rounded-full p-2">
-              <span className=" bg-[#00adb5] p-1.5 rounded-full absolute ml-4 z-20"></span>
+            <div className={` ${item?.status === "unread" ? "text-[#00adb5] border border-[#00adb5]" : ""}  rounded-full p-2`}>
+              <span className={`${item?.status === "unread" ? "bg-[#00adb5]" : ""} p-1.5 rounded-full absolute ml-4 z-20`}></span>
               <IoMdNotificationsOutline size={30} className="relative" />
             </div>
             <div>
-              <p className="font-semibold">{item?.message}</p>
+              <p className={`font-semibold ${item?.status === "unread" ? "text-[#00adb5]" : ""}`}>{item?.content.length > 100 ? item?.content.slice(0, 100) + "..." : item?.content}</p>
               <p className="text-gray-500">{moment(item?.createdAt).fromNow()}</p>
             </div>
           </div>
@@ -118,7 +75,7 @@ const Notification = () => {
       <div className="mt-4 flex justify-center">
         <Pagination
           current={currentPage}
-          total={allNotification?.notifications.length}
+          total={data?.data?.attributes?.notifications.length}
           pageSize={pageSize}
           onChange={onPageChange}
         />

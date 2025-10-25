@@ -90,6 +90,15 @@ const settingApi = baseApi.injectEndpoints({
         providesTags: ["Notification"],
       }),
     }),
+    
+    readNotification: builder.mutation({
+      query: (data) => ({
+        url: "/info/notifications/seen",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Notification"],
+    }),
 
     sendUserNotification: builder.mutation({
       query: (data) => ({
@@ -156,6 +165,7 @@ export const {
   useUpdateProfileMutation,
 
   useGetAllNotificationQuery,
+  useReadNotificationMutation,
   useSendUserNotificationMutation,
 
   useGetAllFaqQuery,
