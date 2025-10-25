@@ -154,13 +154,15 @@ const Earnings = () => {
       </div>
 
       {/* ✅ Pagination */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-end mt-4">
+        {/* // need to right side this  */}
         <Pagination
           current={currentPage}
           pageSize={pageSize}
           total={earningsData?.total || 0}
           onChange={onPageChange}
           showSizeChanger={false}
+          className="flex justify-end"
         />
       </div>
 

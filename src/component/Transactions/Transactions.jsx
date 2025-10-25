@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { Table, Pagination, Input, DatePicker, Space, ConfigProvider } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { useGetTransactionsQuery } from '../../redux/features/transactions/transactions';
+import moment from 'moment';
 
 const Transactions = () => {
+    const limit = 10;
+    const createdAt = moment().format('YYYY-MM-DD');
+
+    const { data } = useGetTransactionsQuery({ limit, createdAt });
+    console.log(data);
+
     // Static Data for Transactions
     const transactionData = [
         { id: 9003237, userName: "Andrew Chapman", phoneNumber: "+7 (903) 941-02-27", transactionType: "Top-up", paymentMethod: "Credit card", date: "2020-05-02 07:10:15", amount: "$1,927,105", status: "Pending" },
@@ -104,6 +112,7 @@ const Transactions = () => {
                 showSizeChanger
                 pageSizeOptions={[10, 20, 50, 100]}
                 style={{ marginTop: '20px', textAlign: 'center' }}
+                className='flex items-center justify-end'
             />
         </div>
     );
