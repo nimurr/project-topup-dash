@@ -76,10 +76,10 @@ const OfferFeeComponent = () => {
                 <h2 className="text-2xl font-semibold">Offers & Fees</h2>
                 <p className="text-sm text-gray-500">Set your commission for top-ups and gift cards</p>
 
-                <div className="mt-4 rounded-lg gap-2">
+                <div className="mt-4 rounded-lg gap-2 overflow-hidden ">
                     <table
                         border={1}
-                        className="w-full !border-2 !rounded-lg border-[#F0F9FF] table-auto text-left border-collapse"
+                        className="w-full !border border-[#00adb5] !rounded-lg overflow-hidden table-auto text-left border-collapse"
                     >
                         <thead className='bg-[#00adb5] text-white overflow-hidden rounded-lg'>
                             <tr className="border-b border-[#F0F9FF]">
@@ -94,7 +94,7 @@ const OfferFeeComponent = () => {
                         <tbody>
                             {
                                 fullData?.map((fee) => (
-                                    <tr key={fee.id} className="border-b capitalize border-[#F0F9FF]">
+                                    <tr key={fee.id} className="border capitalize border-[#00adb5]">
                                         <td className="py-2 px-4">{fee.stripePercentageFee}%</td>
                                         <td className="py-2 px-4">{fee.topUpFees}%</td>
                                         <td className="py-2 px-4">{fee.giftCardFee}%</td>
@@ -121,7 +121,7 @@ const OfferFeeComponent = () => {
                     </table>
                     <div>
                         {
-                            isLoading && <h1 className='text-3xl font-semibold text-center text-blue-600 flex items-center justify-center'>Loading...</h1>
+                            isLoading && <h1 className='text-xl font-semibold text-center text-blue-600 flex items-center justify-center py-3' >Loading...</h1>
                         }
                     </div>
                 </div>
