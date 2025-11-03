@@ -21,9 +21,9 @@ const Users = () => {
     page: currentPage,
     limit: pageSize,
   });
- 
 
-  const usersData = data?.data?.attributes?.results || []; 
+
+  const usersData = data?.data?.attributes?.results || [];
 
   // Format static user data
   useEffect(() => {
@@ -53,9 +53,7 @@ const Users = () => {
       setDataSource(
         usersData.filter(
           (user) =>
-            user.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchText.toLowerCase()) ||
-            String(user.phoneNumber).includes(searchText)
+            user?.fullName?.toLowerCase().includes(searchText.toLowerCase())
         )
       );
     }
@@ -66,9 +64,9 @@ const Users = () => {
     if (!selectedDate) {
       setDataSource(usersData);
     } else {
-      const formattedDate = selectedDate.format("YYYY-MM-DD");
+      const formattedDate = selectedDate?.format("YYYY-MM-DD");
       setDataSource(
-        usersData.filter(
+        usersData?.filter(
           (user) => moment(user.createdAt).format("YYYY-MM-DD") === formattedDate
         )
       );
