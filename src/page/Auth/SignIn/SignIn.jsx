@@ -1,11 +1,7 @@
 import signinImage from "/public/Auth/login.png";
-import authLogo from "../../../assets/auth/auth-logo.png";
-
-
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Checkbox } from "antd";
 import { HiOutlineLockClosed, HiOutlineMail } from "react-icons/hi";
-import CustomButton from "../../../utils/CustomButton";
 import CustomInput from "../../../utils/CustomInput";
 import { useLoginMutation } from "../../../redux/features/auth/authApi";
 import { toast } from "sonner";
@@ -16,6 +12,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
+
   const handleSubmit = async (values) => {
     const { email, password } = values;
     const data = {
@@ -23,33 +20,23 @@ const SignIn = () => {
     }
     try {
       const res = await login(data).unwrap();
-
-
       if (res.error) {
         toast.error(res.error.data.message);
-        console.log(res.error.data.message);
       }
       if (res?.code === 200) {
         localStorage.setItem("token", res?.data?.attributes?.tokens?.access?.token);
+        localStorage.setItem("user", JSON.stringify(res?.data?.attributes?.user));
+        dispatch(loggedUser(res?.data?.attributes?.user));
         toast.success(res?.message);
         navigate("/");
       }
-
-
-
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      toast.error(error?.data?.message || "Something went wrong");
     }
   };
 
   return (
     <div className="w-full  h-full md:h-screen md:flex justify-around overflow-visible">
-      {/* <img
-            src={authLogo}
-            className="w-[147px] h-[144px] mx-auto md:my-20 md:mx-5"
-            alt="Sign in illustration"
-      /> */}
       <div className="w-full max-w-7xl mx-auto border-shadow rounded-md h-[70%] md:my-28 grid grid-cols-1 md:grid-cols-2 place-content-center  gap-8 bg-white md:mx-10">
 
         <div className="mt-16 px-10 py-10">

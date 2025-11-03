@@ -1,8 +1,18 @@
+import { useEffect } from "react";
 import IncomeGraphChart from "../../component/Main/Dashboard/IncomeGraphChart";
 import Piechart from "../../component/Main/Dashboard/Piechart";
 import RecentTransactions from "../../component/Main/Dashboard/RecentTransactions";
 import Status from "../../component/Main/Dashboard/Status";
 const DashboardHome = () => {
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      window.location.href = "/auth/login";
+    }
+  }, []);
+
   return (
     <section>
       <h1 className="text-4xl font-semibold py-5 px-3">Overview</h1>
