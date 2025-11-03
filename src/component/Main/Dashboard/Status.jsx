@@ -8,7 +8,7 @@ const Status = () => {
 
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-5">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
       <div className="flex justify-between items-center p-5 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
         <div className="space-y-2">
