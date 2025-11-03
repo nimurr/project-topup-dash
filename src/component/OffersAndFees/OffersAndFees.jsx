@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, message, Button, Select, DatePicker, Radio } from 'antd';
-import { IoMdInformationCircleOutline } from 'react-icons/io';
+import { Modal, Input, message, Button, Select, Radio } from 'antd';
 import { useCreatePromoCodeMutation, useDeletePromoCodeMutation, useGetAllPromoCodeListQuery, useUpdatePromoCodeMutation } from '../../redux/features/offerFees/offerFees';
-import moment from 'moment';
 import { MdOutlineDeleteForever } from 'react-icons/md';
 import OfferFeeComponent from './OfferFeeComponent';
+import moment from 'moment';
 
 const OffersAndFees = () => {
     const { data } = useGetAllPromoCodeListQuery();
@@ -12,36 +11,36 @@ const OffersAndFees = () => {
 
     const [selectedOption, setSelectedOption] = useState('1');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);  // New state to check edit mode
-    const [promoCodeType, setPromoCodeType] = useState('top-up');
-    const [promoCode, setPromoCode] = useState('');
-    const [promoCodeValue, setPromoCodeValue] = useState('');
-    const [promoCodeStatus, setPromoCodeStatus] = useState('active');
-    const [expiresAt, setExpiresAt] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false); // To track whether we're editing a promo code
+    const [referralCode, setReferralCode] = useState('');
+    const [discount, setDiscount] = useState('');
+    const [status, setStatus] = useState('active');
+    const [discountType, setDiscountType] = useState('gift-card');
+    const [typeOfDiscount, setTypeOfDiscount] = useState('fixed');
+    const [disconnectOn, setDisconnectOn] = useState('onlyApplicatinFees');
+    const [startDate, setStartDate] = useState(null);
+    const [expiryDate, setExpiryDate] = useState(null);
     const [usageLimit, setUsageLimit] = useState('');
-    const [amount, setAmount] = useState('');
-    const [selectedPromoCodeId, setSelectedPromoCodeId] = useState(null);  // Store selected promo code id
+    const [selectedPromoCodeId, setSelectedPromoCodeId] = useState(null); // Store selected promo code ID
 
-    // Mutations
     const [createPromoCode] = useCreatePromoCodeMutation();
     const [updatePromoCode] = useUpdatePromoCodeMutation();
 
     // Handle form submission for new promo code
     const handleCreatePromoCode = async () => {
-        if (!promoCode || !promoCodeValue || !promoCodeStatus || !expiresAt || !usageLimit) {
-            message.error('Please fill in all required fields');
-            return;
-        }
-
         const promoCodeData = {
-            referralCode: promoCode,
-            percentage: promoCodeValue,
-            status: promoCodeStatus,
-            type: promoCodeType,
-            expiresAt: moment(expiresAt).format('YYYY-MM-DD'),
+            referralCode,
+            discount,
+            status,
+            discountType,
+            typeOfDiscount,
+            disconnectOn,
+            startDate: moment(startDate).format('YYYY-MM-DD'), // Ensure correct format
+            expiryDate: moment(expiryDate).format('YYYY-MM-DD') || null, // Ensure correct format
             usageLimit,
-            amount,
         };
+
+        console.log(promoCodeData);
 
         try {
             const res = await createPromoCode(promoCodeData).unwrap();
@@ -53,33 +52,31 @@ const OffersAndFees = () => {
                 message.error(res?.message || 'Failed to create promo code');
             }
         } catch (error) {
-            console.log(error?.data?.message);
+            console.log(error);
             message.error(error?.data?.message || 'Failed to create promo code');
         }
     };
 
     // Handle form submission for editing an existing promo code
     const handleUpdatePromoCode = async () => {
-        if (!promoCode || !promoCodeValue || !promoCodeStatus || !expiresAt || !usageLimit) {
+        if (!referralCode || !discount || !status || !startDate || !usageLimit) {
             message.error('Please fill in all required fields');
             return;
         }
 
         const promoCodeData = {
-            // referralCode: promoCode,
-            percentage: promoCodeValue,
-            status: promoCodeStatus,
-            type: promoCodeType,
-            expiresAt: moment(expiresAt).format('YYYY-MM-DD'),
+            discount,
+            status,
+            discountType,
+            typeOfDiscount,
+            disconnectOn,
+            startDate: moment(startDate).format('YYYY-MM-DD'), // Ensure correct format
+            expiryDate: moment(expiryDate).format('YYYY-MM-DD') || null, // Ensure correct format
             usageLimit,
-            amount,
         };
 
-        console.log(promoCode);
-
         try {
-            const res = await updatePromoCode({ id: promoCode, data: promoCodeData }).unwrap();
-            console.log(res?.data?.attributes);
+            const res = await updatePromoCode({ id: referralCode, data: promoCodeData }).unwrap();
             if (res.code === 200) {
                 message.success(res?.message || 'Promo code updated successfully');
                 setIsModalVisible(false);
@@ -87,7 +84,6 @@ const OffersAndFees = () => {
                 message.error(res?.message || 'Failed to update promo code');
             }
         } catch (error) {
-            console.log(error?.data?.message);
             message.error(error?.data?.message || 'Failed to update promo code');
         }
     };
@@ -97,14 +93,12 @@ const OffersAndFees = () => {
     const handleDelete = async (id) => {
         try {
             const res = await deletePromoCode(id).unwrap();
-            console.log(res);
             if (res.code === 200) {
                 message.success(res?.message || 'Promo code deleted successfully');
             } else {
                 message.error(res?.message || 'Failed to delete promo code');
             }
         } catch (error) {
-            console.log(error);
             message.error(error?.data?.message || 'Failed to delete promo code');
         }
     };
@@ -114,28 +108,37 @@ const OffersAndFees = () => {
         if (promoCodeId) {
             // Editing a promo code
             const promo = fullData.find(item => item.referralCode === promoCodeId);
-            setPromoCode(promo.referralCode);
-            setPromoCodeValue(promo.percentage);
-            setPromoCodeStatus(promo.status);
-            setPromoCodeType(promo.type);
-            setExpiresAt(moment(promo.expiresAt));
+            setReferralCode(promo.referralCode);
+            setDiscount(promo.discount);
+            setStatus(promo.status);
+            setDiscountType(promo.discountType);
+            setTypeOfDiscount(promo.typeOfDiscount);
+            setDisconnectOn(promo.disconnectOn);
+            setStartDate(moment(promo.startDate).format('YYYY-MM-DD')); // Set start date correctly
+            setExpiryDate(promo.expiryDate ? moment(promo.expiryDate).format('YYYY-MM-DD') : null); // Set expiry date correctly
             setUsageLimit(promo.usageLimit);
-            setAmount(promo.amount || '');
-            setSelectedPromoCodeId(promoCodeId);  // Set selected promo code ID
+            setSelectedPromoCodeId(promoCodeId);
             setIsEditMode(true);
         } else {
             // Creating a new promo code
-            setPromoCode('');
-            setPromoCodeValue('');
-            setPromoCodeStatus('active');
-            setPromoCodeType('top-up');
-            setExpiresAt(null);
+            setReferralCode('');
+            setDiscount('');
+            setStatus('active');
+            setDiscountType('gift-card');
+            setTypeOfDiscount('fixed');
+            setDisconnectOn('onlyApplicatinFees');
+            setStartDate(null);
+            setExpiryDate(null);
             setUsageLimit('');
-            setAmount('');
             setIsEditMode(false);
         }
 
         setIsModalVisible(true);
+    };
+
+    const handleDateChange = (date, setter) => {
+        // Format the date before setting it into state (e.g. YYYY-MM-DD format)
+        setter(date);
     };
 
     return (
@@ -161,12 +164,12 @@ const OffersAndFees = () => {
                         <tbody className="!border rounded-lg">
                             {fullData?.map((item, index) => (
                                 <tr className="bg-white hover:bg-[#F0F9FF] !border-b capitalize" key={index}>
-                                    <td className="py-3 px-4">{item?.type}</td>
+                                    <td className="py-3 px-4">{item?.discountType}</td>
                                     <td className="py-3 px-4">{item?.referralCode}</td>
-                                    <td className="py-3 px-4">{item?.percentage}%</td>
+                                    <td className="py-3 px-4">{item?.discount}%</td>
                                     <td className="py-3 px-4">{item?.usageLimit} times</td>
                                     <td className="py-3 px-4">
-                                        {moment(item?.expiresAt).format('dddd, MMMM Do YYYY')}
+                                        {moment(item?.startDate).format('dddd, MMMM Do YYYY')}
                                     </td>
                                     <td className="py-3 flex items-center gap-2 px-4">
                                         <button
@@ -208,8 +211,8 @@ const OffersAndFees = () => {
                         <label className="block text-sm font-medium">Promo Code Type</label>
                         <Select
                             className="w-full h-10 rounded"
-                            value={promoCodeType}
-                            onChange={setPromoCodeType}
+                            value={discountType}
+                            onChange={setDiscountType}
                         >
                             <Select.Option value="top-up">Top-Up</Select.Option>
                             <Select.Option value="gift-card">Gift Card</Select.Option>
@@ -222,8 +225,8 @@ const OffersAndFees = () => {
                         <Input
                             placeholder="Promo Code"
                             className="py-2"
-                            value={promoCode}
-                            onChange={(e) => setPromoCode(e.target.value)}
+                            value={referralCode}
+                            onChange={(e) => setReferralCode(e.target.value)}
                         />
                     </div>
 
@@ -233,14 +236,14 @@ const OffersAndFees = () => {
                             type="number"
                             className="py-2"
                             placeholder="Promo Code Value"
-                            value={promoCodeValue}
-                            onChange={(e) => setPromoCodeValue(e.target.value)}
+                            value={discount}
+                            onChange={(e) => setDiscount(e.target.value)}
                         />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium">Promo Code Status</label>
-                        <Radio.Group value={promoCodeStatus} onChange={(e) => setPromoCodeStatus(e.target.value)}>
+                        <Radio.Group value={status} onChange={(e) => setStatus(e.target.value)}>
                             <Radio value="active">Active</Radio>
                             <Radio value="pushed">Pushed</Radio>
                             <Radio value="expired">Expired</Radio>
@@ -248,12 +251,34 @@ const OffersAndFees = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Expiration Date</label>
-                        <DatePicker
+                        <label className="block text-sm font-medium">Type of Discount</label>
+                        <Select
+                            className="w-full h-10 rounded"
+                            value={typeOfDiscount}
+                            onChange={setTypeOfDiscount}
+                        >
+                            <Select.Option value="fixed">Fixed</Select.Option>
+                            <Select.Option value="percentage">Percentage</Select.Option>
+                        </Select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">Start Date</label>
+                        <input
+                            type="date"
                             className="w-full py-2 px-4 border rounded bg-gray-100"
-                            value={expiresAt}
-                            onChange={(date) => setExpiresAt(date)}
-                            format="YYYY-MM-DD"
+                            value={startDate}  // Directly use the state variable for startDate
+                            onChange={(e) => handleDateChange(e.target.value, setStartDate)}  // Handle date change and set the state
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">End Date</label>
+                        <input
+                            type="date"
+                            className="w-full py-2 px-4 border rounded bg-gray-100"
+                            value={expiryDate}  // Directly use the state variable for expiryDate
+                            onChange={(e) => handleDateChange(e.target.value, setExpiryDate)}  // Handle date change and set the state
                         />
                     </div>
 
@@ -265,17 +290,6 @@ const OffersAndFees = () => {
                             placeholder="Usage Limit"
                             value={usageLimit}
                             onChange={(e) => setUsageLimit(e.target.value)}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Amount (optional)</label>
-                        <Input
-                            type="number"
-                            className="py-2"
-                            placeholder="Amount"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
                         />
                     </div>
 
