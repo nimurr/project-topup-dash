@@ -9,6 +9,8 @@ const OffersAndFees = () => {
     const { data } = useGetAllPromoCodeListQuery();
     const fullData = data?.data?.attributes || [];
 
+    console.log(fullData);
+
     const [selectedOption, setSelectedOption] = useState('1');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false); // To track whether we're editing a promo code
@@ -48,6 +50,15 @@ const OffersAndFees = () => {
             if (res.code === 201) {
                 message.success(res?.message || 'Promo code created successfully');
                 setIsModalVisible(false);
+                setReferralCode('');
+                setDiscount('');
+                setStatus('active');
+                setDiscountType('gift-card');
+                setTypeOfDiscount('fixed');
+                setDisconnectOn('onlyApplicatinFees');
+                setStartDate(null);
+                setExpiryDate(null);
+                setUsageLimit('');
             } else {
                 message.error(res?.message || 'Failed to create promo code');
             }
