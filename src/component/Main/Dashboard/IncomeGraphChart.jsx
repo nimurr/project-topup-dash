@@ -29,7 +29,7 @@ const data = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-lg">
+      <div className="custom-tooltip bg-[#00adb5] p-2 border text-white border-[#00adb5] rounded shadow-lg">
         <p className="label font-semibold">{`Month: ${label}`}</p>
         <p className="intro">{`Total Income: $${payload[0].value.toLocaleString()}`}</p>
       </div>
@@ -48,26 +48,27 @@ const IncomeGraphChart = () => {
       <div className="border-b border-[#b0e6e8]">
         <div className="flex justify-between items-center p-3">
           <h1 className="font-semibold">Income Ratio</h1>
-          <DatePicker picker="year" defaultOpenValue={currentYear} />
+          {/* <DatePicker picker="year" defaultOpenValue={currentYear} /> */}
         </div>
       </div>
-
-      <ResponsiveContainer className="pr-4 " width="100%" height={300}>
-        <LineChart
-          data={data}  // Using the static data here
-          margin={{
-            top: 5,
-            bottom: 5,
-          }}
-          className="md:mt-5 md:mb-5"
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Line type="monotone" dataKey="income" stroke="#b0e6e8" dot={true} />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="">
+        <ResponsiveContainer className="pr-4" width="100%" height={400}>
+          <LineChart
+            data={data}
+            margin={{
+              top: 5,
+              bottom: 5,
+            }}
+            className="md:mt-5 md:mb-5 "
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Line type="monotone" dataKey="income" stroke="#b0e6e8" dot={true} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </section>
   );
 };

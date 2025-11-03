@@ -55,12 +55,14 @@ const Transactions = () => {
                         onChange={(date) => setSelectedDate(date)}
                         placeholder="Date"
                         format="YYYY-MM-DD"
+                        className='border border-[#00adb5]'
                     />
                     <Input
                         placeholder="Search by Name, Phone, or ID"
                         prefix={<SearchOutlined />}
                         onChange={(e) => setSearchText(e.target.value)}
                         value={searchText}
+                        className='border border-[#00adb5]'
                     />
                 </Space>
             </div>

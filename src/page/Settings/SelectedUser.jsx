@@ -174,9 +174,9 @@ const SelectedUser = () => {
 
     return (
         <div className="sm:p-8 p-2 overflow-x-auto">
-            <div className="mb-2 capitalize">
-                <h2> Title :- {title}</h2>
-                <h2> Description :- {description}</h2>
+            <div className="mb-5 capitalize bg-gray-100 border border-[#00adb5]  p-4 rounded">
+                <h2> <span className="font-semibold">Title :-</span> {title}</h2>
+                <h2 className="mt-2 text-justify"> <span className="font-semibold ">Description :- </span> {description?.length > 300 ? description.slice(0, 300) + " More..." : description}</h2>
             </div>
             <div className="min-w-[1000px]">
                 <div className="flex justify-between w-full mb-5">

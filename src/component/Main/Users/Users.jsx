@@ -53,7 +53,8 @@ const Users = () => {
       setDataSource(
         usersData.filter(
           (user) =>
-            user?.fullName?.toLowerCase().includes(searchText.toLowerCase())
+            user?.fullName?.toLowerCase().includes(searchText.toLowerCase()) ||
+            user?.email?.toLowerCase().includes(searchText.toLowerCase())
         )
       );
     }
@@ -117,20 +118,20 @@ const Users = () => {
         <Form layout="inline" className="md:flex space-x-2 mt-4 md:mt-0">
           <Item name="date">
             <DatePicker
-              className="rounded-md border border-[#92b8c0]"
+              className="rounded-md border h-8 border-[#00adb5]"
               onChange={(date) => setSelectedDate(date)}
               placeholder="Select Date"
             />
           </Item>
           <Item name="username">
             <Input
-              className="rounded-md w-[70%] md:w-full border border-[#92b8c0]"
-              placeholder="User Name"
+              className="rounded-md min-w-[250px] h-8 md:w-full border border-[#00adb5]"
+              placeholder="User Name / Email"
               onChange={(e) => setSearchText(e.target.value)}
             />
           </Item>
           <Item>
-            <button className="size-8 rounded-full flex justify-center items-center bg-[#92b8c0] text-black">
+            <button className=" h-8 w-8 rounded-full flex justify-center items-center bg-[#00adb5] text-white">
               <IoIosSearch className="size-5" />
             </button>
           </Item>

@@ -70,9 +70,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   return (
     <div>
       {/* Desktop Sidebar */}
-      <div className="hidden overflow-y-auto md:block w-full md:w-[200px] lg:w-[250px] xl:w-[280px] h-full bg-[#fff] fixed shadow-2xl">
+      <div className="hidden overflow-y-auto md:block w-full md:w-[200px] lg:w-[250px] xl:w-[280px] h-full bg-[#fff] fixed shadow-2xl shadow-[#00acb538] border-r border-[#00adb5]">
         <Link to={"/"} className="flex flex-col justify-center items-center pt-5 gap-2 bg-white mb-10 text-black">
-          <img src={'/Auth/logo.png'} alt="logo" className="w-[80px] my-5 " />
+          <img src={'/Auth/logo.png'} alt="logo" className="w-[50px] my-5 " />
         </Link>
         <ul className="flex flex-col gap-5">
           {sidebarItems.map((item) => (
@@ -80,7 +80,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `w-[80%] mx-auto px-5 py-2 flex justify-start items-center gap-3 text-black ${isActive ? "bg-[#fff] !text-[#00adb5] rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]" : ""
+                `w-[80%] mx-auto px-5 py-2 flex justify-start items-center gap-3 text-black ${isActive ? "bg-[#00adb5] !text-[#fff] rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]" : ""
                 }`
               }
             >
@@ -105,9 +105,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         className={`fixed top-0 overflow-y-auto left-0 z-40 w-64 h-full bg-[#00adb5] shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } transition-transform duration-300 ease-in-out md:hidden`}
       >
-        <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
-          <img src={'/Auth/logo.png'} alt="logo" className="h-20 mb-5" />
-        </div>
+        <Link to={"/"} onClick={toggleSidebar} className="flex flex-col justify-center items-center pt-5 gap-2 ">
+          <img src={'/Auth/logo.png'} alt="logo" className="w-[50px] mb-5" />
+        </Link>
         <ul className="flex flex-col gap-3 mt-10">
           {sidebarItems.map((item) => (
             <NavLink
@@ -115,7 +115,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               to={item.path}
               onClick={toggleSidebar} // Close sidebar on link click
               className={({ isActive }) =>
-                `w-[70%] mx-auto px-5 py-2 flex items-center gap-3 text-white ${isActive ? "bg-[#00adb5] " : ""
+                `w-[70%] mx-auto px-5 py-2 flex items-center gap-3 text-white rounded-lg ${isActive ? "bg-[#fff] !text-[#00adb5] " : ""
                 }`
               }
             >

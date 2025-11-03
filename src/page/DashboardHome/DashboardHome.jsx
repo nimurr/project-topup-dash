@@ -7,7 +7,6 @@ const DashboardHome = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-
     if (!user) {
       window.location.href = "/auth/login";
     }
@@ -22,7 +21,6 @@ const DashboardHome = () => {
           <IncomeGraphChart />
           <RecentTransactions />
         </div>
-        {/* <Piechart /> */}
       </div>
     </section>
   );
