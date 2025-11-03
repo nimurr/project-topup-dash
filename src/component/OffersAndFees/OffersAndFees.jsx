@@ -28,7 +28,7 @@ const OffersAndFees = () => {
     const [createPromoCode] = useCreatePromoCodeMutation();
     const [updatePromoCode] = useUpdatePromoCodeMutation();
 
-    // Handle form submission for new promo code
+    // Handle form submission for creating a new promo code
     const handleCreatePromoCode = async () => {
         const promoCodeData = {
             referralCode,
