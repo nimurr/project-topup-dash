@@ -1,6 +1,8 @@
 import { ConfigProvider, Table, Pagination, Space, message, Modal, Button } from "antd";
 import { useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { useGetAllUsersQuery } from "../../../redux/features/user/userApi";
+import moment from "moment";
 
 const RecentTransactions = () => {
   const [searchText, setSearchText] = useState("");
@@ -10,83 +12,8 @@ const RecentTransactions = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // Store selected user details
 
-  // Static Data
-  const recentUsers = [
-    {
-      id: 1,
-      fullName: "John Doe",
-      email: "john.doe@example.com",
-      role: "Admin",
-      createdAt: "2023-01-15",
-    },
-    {
-      id: 2,
-      fullName: "Jane Smith",
-      email: "jane.smith@example.com",
-      role: "User",
-      createdAt: "2023-02-20",
-    },
-    {
-      id: 3,
-      fullName: "Michael Johnson",
-      email: "michael.johnson@example.com",
-      role: "Admin",
-      createdAt: "2023-03-10",
-    },
-    {
-      id: 4,
-      fullName: "Sarah Brown",
-      email: "sarah.brown@example.com",
-      role: "User",
-      createdAt: "2023-04-05",
-    },
-    {
-      id: 5,
-      fullName: "Chris Evans",
-      email: "chris.evans@example.com",
-      role: "Admin",
-      createdAt: "2023-05-12",
-    },
-    {
-      id: 6,
-      fullName: "David Clark",
-      email: "david.clark@example.com",
-      role: "User",
-      createdAt: "2023-06-18",
-    },
-    {
-      id: 7,
-      fullName: "Emily Davis",
-      email: "emily.davis@example.com",
-      role: "User",
-      createdAt: "2023-07-22",
-    },
-    {
-      id: 8,
-      fullName: "James Wilson",
-      email: "james.wilson@example.com",
-      role: "Admin",
-      createdAt: "2023-08-14",
-    },
-  ];
-
-  // Handle User Blocking
-  const handleUserRemove = async (id) => {
-    try {
-      message.success("User blocked successfully!");
-    } catch (error) {
-      message.error("Something went wrong");
-    }
-  };
-
-  // Handle User Unblocking
-  const handleUserUnBlock = async (id) => {
-    try {
-      message.success("User unblocked successfully!");
-    } catch (error) {
-      message.error("Something went wrong");
-    }
-  };
+  const { data, isLoading } = useGetAllUsersQuery({ page: currentPage, limit: pageSize });
+  const fullData = data?.data?.attributes?.results || [];
 
   // Open Modal with User Details
   const viewDetails = (user) => {
@@ -118,6 +45,7 @@ const RecentTransactions = () => {
       dataIndex: "email",
       key: "email",
       align: "center",
+      render: (text) => <span className="font-semibold">{text || "---"}</span>,
     },
     {
       title: "Role",
@@ -130,6 +58,7 @@ const RecentTransactions = () => {
       dataIndex: "joinDate",
       key: "joinDate",
       align: "center",
+      render: (date) => moment(date).format("DD MMM YYYY"),
     },
     {
       title: "Action",
@@ -145,7 +74,7 @@ const RecentTransactions = () => {
     },
   ];
 
-  const filteredData = recentUsers?.filter((user) => {
+  const filteredData = fullData?.filter((user) => {
     const matchesText =
       `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchText.toLowerCase());
     const matchesDate = selectedDate
@@ -172,42 +101,50 @@ const RecentTransactions = () => {
 
   return (
     <div className="w-full bg-white rounded-lg">
+      {
+        isLoading ? <div class="mx-auto w-full h-[420px] flex items-center justify-center animate-pulse rounded-md border border-[#00acb581] p-4">
+          <div class="flex animate-pulse space-x-4 w-full">
+            <div class="size-10 rounded-full bg-[#00acb581]"></div>
+            <div class="flex-1 space-y-6 py-1">
+              <div class="h-2 rounded bg-[#00acb581]"></div>
+              <div class="h-2 rounded bg-[#00acb581]"></div>
+              <div class="h-2 rounded bg-[#00acb581]"></div>
+              <div class="h-2 rounded bg-[#00acb581]"></div>
+              <div class="space-y-3">
+                <div class="grid grid-cols-3 gap-4">
+                  <div class="col-span-2 h-2 rounded bg-[#00acb581]"></div>
+                  <div class="col-span-1 h-2 rounded bg-[#00acb581]"></div>
+                </div>
+                <div class="h-2 rounded bg-[#00acb581]"></div>
+                <div class="h-2 rounded bg-[#00acb581]"></div>
+                <div class="h-2 rounded bg-[#00acb581]"></div>
+                <div class="h-2 rounded bg-[#00acb581]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+          :
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  headerBg: "#00adb5",
+                  headerColor: "#fff",
+                  headerBorderRadius: 5,
+                },
+              },
+            }}
+          >
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false} // Disable pagination in the table to handle it manually
+              scroll={{ x: 500 }}
+              className="text-center"
+            />
+          </ConfigProvider>
+      }
       {/* Table */}
-      <ConfigProvider
-        theme={{
-          components: {
-            Table: {
-              headerBg: "#00adb5",
-              headerColor: "#fff",
-              headerBorderRadius: 5,
-            },
-          },
-        }}
-      >
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false} // Disable pagination in the table to handle it manually
-          scroll={{ x: 500 }}
-          className="text-center"
-        />
-      </ConfigProvider>
-
-      {/* Custom Pagination Component */}
-      <div className="flex justify-center my-10">
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={filteredData?.length}
-          onChange={(page, pageSize) => {
-            setCurrentPage(page);
-            setPageSize(pageSize);
-          }}
-          showSizeChanger
-          pageSizeOptions={[10, 20, 50, 100]}
-          style={{ display: "flex", justifyContent: "center", width: "100%" }} // Custom style for centering
-        />
-      </div>
 
       {/* User Details Modal */}
       <Modal
@@ -218,10 +155,10 @@ const RecentTransactions = () => {
         {selectedUser && (
           <div>
             <h2 className="text-2xl font-semibold text-center mb-10">User Details</h2>
-            <p className="flex items-center justify-between my-5"><strong>Name:</strong> {selectedUser.userName}</p>
-            <p className="flex items-center justify-between my-5"><strong>Email:</strong> {selectedUser.email}</p>
+            <p className="flex items-center justify-between my-5"><strong>Name:</strong> {selectedUser.userName || "---"}</p>
+            <p className="flex items-center justify-between my-5"><strong>Email:</strong> {selectedUser.email || "---"}</p>
             <p className="flex items-center justify-between my-5"><strong>Role:</strong> {selectedUser.role}</p>
-            <p className="flex items-center justify-between my-5"><strong>Join Date:</strong> {selectedUser.joinDate}</p>
+            <p className="flex items-center justify-between my-5"><strong>Join Date:</strong> {moment(selectedUser.createdAt).format("DD MMM YYYY")}</p>
           </div>
         )}
       </Modal>
