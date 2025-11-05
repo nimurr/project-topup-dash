@@ -97,7 +97,7 @@ const Transactions = () => {
                         />
                     </ConfigProvider>
 
-                    {/* Pagination */}
+                    {/* Pagination */} 
                     <Pagination
                         current={currentPage}
                         total={filteredByDate.length} // Use filtered data length for pagination
