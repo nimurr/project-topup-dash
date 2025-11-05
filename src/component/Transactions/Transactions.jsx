@@ -9,10 +9,8 @@ const Transactions = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const limit = 10;
-    const createdAt = moment().format('YYYY-MM-DD');
 
-    const { data, isLoading } = useGetTransactionsQuery({ limit, createdAt });
+    const { data, isLoading } = useGetTransactionsQuery({ page: currentPage, limit: pageSize });
     const transactions = data?.data?.attributes?.results || [];
 
     // Columns for the Table
@@ -30,7 +28,7 @@ const Transactions = () => {
         const fullName = transaction.user?.fullName?.toLowerCase() || '';
         const phoneNumber = transaction.user?.phoneNumber?.toString() || ''; // Ensure phoneNumber is treated as string
         const transactionId = transaction.id?.toString() || '';
-        
+
         return (
             fullName.includes(searchText.toLowerCase()) ||
             phoneNumber.includes(searchText) ||
@@ -38,9 +36,12 @@ const Transactions = () => {
         );
     });
 
-    // Filter Data based on Selected Date
+    // Filter Data based on Selected Date (compare formatted dates)
     const filteredByDate = selectedDate
-        ? filteredData.filter((transaction) => moment(transaction.createdAt).isSame(selectedDate, 'day'))
+        ? filteredData.filter((transaction) => {
+            const transactionDate = moment(transaction?.createdAt).format('YYYY-MM-DD');
+            return transactionDate === selectedDate.format('YYYY-MM-DD');
+        })
         : filteredData;
 
     // Paginated Data: Apply pagination to the filtered data
