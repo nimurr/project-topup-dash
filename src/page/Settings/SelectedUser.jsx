@@ -39,7 +39,7 @@ const SelectedUser = () => {
 
     const [searchPhoneNumber, setSearchPhoneNumber] = useState("");
     const handleSearchPhoneNumber = (phoneNumber) => {
-        
+
         setSearchPhoneNumber(phoneNumber);
         const filteredUsers = usersData.filter((user) => user.callingCode === ("+" + phoneNumber));
         setDataSource(filteredUsers);
@@ -58,6 +58,7 @@ const SelectedUser = () => {
                 email: user.email || "N/A",
                 phoneNumber: user.phoneNumber || "N/A",
                 address_line1: user.address_line1 || "N/A",
+                deviceUUID: user.deviceUUID || "N/A",
                 createdAt: user.createdAt ? new Date(user.createdAt).toLocaleString() : "N/A",
                 imageUrl: user.profileImage ? `YOUR_BASE_URL_HERE/${user.profileImage}` : "default_image_url", // Set a default image URL
                 status: user.status || "N/A",
@@ -130,6 +131,11 @@ const SelectedUser = () => {
             title: "Phone Number",
             dataIndex: "phoneNumber",
             key: "phoneNumber",
+        },
+        {
+            title: "Device UUID",
+            dataIndex: "deviceUUID",
+            key: "deviceUUID",
         },
         {
             title: "Joined Date",

@@ -36,6 +36,7 @@ const Users = () => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         address_line1: user.address_line1,
+        deviceUUID: user.deviceUUID,
         createdAt: user.createdAt,
         imageUrl: user.imageUrl,
         status: user.status,
@@ -86,6 +87,7 @@ const Users = () => {
     { title: "Full Name", dataIndex: "fullName", key: "fullName" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Phone Number", dataIndex: "phoneNumber", key: "phoneNumber" },
+    { title: "Device UUID", dataIndex: "deviceUUID", key: "deviceUUID" },
     {
       title: "Joined Date",
       dataIndex: "createdAt",
