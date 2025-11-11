@@ -29,7 +29,7 @@ const SelectedUser = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const { data: user, isLoading, isFetching } = useGetAllUsersQuery({
-        page: currentPage,
+        page: currentPage, 
         limit: pageSize,
     });
 
