@@ -29,7 +29,7 @@ const SelectedUser = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const { data: user, isLoading, isFetching } = useGetAllUsersQuery({
-        page: currentPage,  
+        page: currentPage,
         limit: pageSize,
     });
 
@@ -39,13 +39,13 @@ const SelectedUser = () => {
 
     const [searchPhoneNumber, setSearchPhoneNumber] = useState("");
     const handleSearchPhoneNumber = (phoneNumber) => {
+        
         setSearchPhoneNumber(phoneNumber);
-
         const filteredUsers = usersData.filter((user) => user.callingCode === ("+" + phoneNumber));
         setDataSource(filteredUsers);
-        
+
     };
- 
+
 
     // Format user data with fallback values
     useEffect(() => {
