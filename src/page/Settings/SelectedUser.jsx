@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetAllUsersQuery } from "../../redux/features/user/userApi";
 import { GoInfo } from "react-icons/go";
 import { Link } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
 import { useSendUserNotificationMutation } from "../../redux/features/setting/settingApi";
 
 const SelectedUser = () => {
@@ -33,6 +34,18 @@ const SelectedUser = () => {
     });
 
     const usersData = user?.data?.attributes?.results || [];
+
+    console.log(usersData);
+
+    const [searchPhoneNumber, setSearchPhoneNumber] = useState("");
+    const handleSearchPhoneNumber = (phoneNumber) => {
+        setSearchPhoneNumber(phoneNumber);
+
+        const filteredUsers = usersData.filter((user) => user.callingCode === ("+" + phoneNumber));
+        setDataSource(filteredUsers);
+        
+    };
+
 
     // Format user data with fallback values
     useEffect(() => {
@@ -181,13 +194,23 @@ const SelectedUser = () => {
             <div className="min-w-[1000px]">
                 <div className="flex justify-between w-full mb-5">
                     <h2 className="text-2xl font-semibold mb-4">User Management</h2>
-                    <button
-                        disabled={selectedRowKeys.length === 0}
-                        onClick={handleSendNotification}
-                        className={`text-white py-2 px-10 bg-[#00adb5] rounded flex items-center gap-2 ${selectedRowKeys.length === 0 && 'bg-[#536566] cursor-no-drop text-gray-400'}`}
-                    >
-                        Send Notification {isSendingNotification && '...'} <TbSend className="text-xl" />
-                    </button>
+                    <div className="flex items-center gap-5 flex-wrap">
+                        {/* filter by country code need to be added */}
+                        <div>
+                            <PhoneInput
+                                placeholder="Search by phone number"
+                                value={searchPhoneNumber || "Please Select Country Code"}
+                                onChange={(phoneNumber) => handleSearchPhoneNumber(phoneNumber)}
+                            />
+                        </div>
+                        <button
+                            disabled={selectedRowKeys.length === 0}
+                            onClick={handleSendNotification}
+                            className={`text-white py-2 px-10 bg-[#00adb5] rounded flex items-center gap-2 ${selectedRowKeys.length === 0 && 'bg-[#536566] cursor-no-drop text-gray-400'}`}
+                        >
+                            Send Notification {isSendingNotification && '...'} <TbSend className="text-xl" />
+                        </button>
+                    </div>
                 </div>
                 <Table
                     columns={columns}
