@@ -6,10 +6,9 @@ import OfferFeeComponent from './OfferFeeComponent';
 import moment from 'moment';
 
 const OffersAndFees = () => {
-    const { data } = useGetAllPromoCodeListQuery();
+    const { data , isLoading } = useGetAllPromoCodeListQuery();
     const fullData = data?.data?.attributes || [];
 
-    console.log(fullData);
 
     const [selectedOption, setSelectedOption] = useState('1');
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -197,6 +196,11 @@ const OffersAndFees = () => {
                             ))}
                         </tbody>
                     </table>
+                    <div>
+                        {
+                            isLoading && <h1 className=' font-semibold text-center text-blue-600 flex items-center justify-center py-3' >Loading...</h1>
+                        }
+                    </div>
                 </div>
 
                 {/* Create New Button */}

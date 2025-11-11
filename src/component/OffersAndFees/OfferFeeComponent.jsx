@@ -6,6 +6,7 @@ import moment from 'moment';
 const OfferFeeComponent = () => {
     const { data, isLoading } = useGerAllFeesQuery();
     const fullData = data?.data?.attributes;
+    console.log(fullData);
 
     // State variables for modal visibility
     const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -13,8 +14,13 @@ const OfferFeeComponent = () => {
 
     // States for the data of the selected fee type (for editing purposes)
     const [selectedFee, setSelectedFee] = useState(null);
-    const [stripePercentageFee, setStripePercentageFee] = useState('');
-    const [feeType, setFeeType] = useState('');
+    const [stripeAmount, setStripeAmount] = useState('');
+    const [stripeUnit, setStripeUnit] = useState('percentage');
+    const [giftCardAmount, setGiftCardAmount] = useState('');
+    const [giftCardUnit, setGiftCardUnit] = useState('fixed');
+    const [topUpAmount, setTopUpAmount] = useState('');
+    const [topUpUnit, setTopUpUnit] = useState('fixed');
+    const [feeType, setFeeType] = useState('stripe'); // default to stripe
 
     const [updateFees] = useUpdateFeesMutation();
 
@@ -24,40 +30,35 @@ const OfferFeeComponent = () => {
         setIsViewModalVisible(true);
     };
 
-    // Open the edit modal and populate with the stripePercentageFee data
+    // Open the edit modal and populate with the fee data
     const openEditModal = (fee) => {
         setSelectedFee(fee);
-        setStripePercentageFee(fee.stripePercentageFee || '');
-        setFeeType(fee.type || 'stripe');  // Set the fee type for editing
+        setStripeAmount(fee?.stripeFee?.amount || '');
+        setStripeUnit(fee?.stripeFee?.unit || 'percentage');
+        setGiftCardAmount(fee?.giftCardFee?.amount || '');
+        setGiftCardUnit(fee?.giftCardFee?.unit || 'fixed');
+        setTopUpAmount(fee?.topUpFees?.amount || '');
+        setTopUpUnit(fee?.topUpFees?.unit || 'fixed');
+        setFeeType(fee?.type || 'stripe');
         setIsEditModalVisible(true);
     };
 
     // Handle saving the edited data
     const handleEditSave = async () => {
-        if (!stripePercentageFee) {
-            message.error('Please enter a valid stripe percentage fee');
+        if (!stripeAmount || !giftCardAmount || !topUpAmount) {
+            message.error('Please enter valid amounts for all fees');
             return;
         }
 
-        const updatedFeeforStripe = {
+        // Prepare the updated fee object based on the fee type
+        const updatedFee = {
             type: feeType,
-            stripePercentageFee: stripePercentageFee,
+            stripeFee: { amount: stripeAmount, unit: stripeUnit },
+            giftCardFee: { amount: giftCardAmount, unit: giftCardUnit },
+            topUpFees: { amount: topUpAmount, unit: topUpUnit },
         };
 
-        const updatedFeeForgiftCard = {
-            type: feeType,
-            giftCardFee: stripePercentageFee,
-        }
-
-        const updatedFeeFortopUp = {
-            type: feeType,
-            topUpFees: stripePercentageFee,
-        }
-
-        const updatedFee = feeType === 'stripe' ? updatedFeeforStripe : feeType === 'giftCard' ? updatedFeeForgiftCard : updatedFeeFortopUp
-
         console.log(updatedFee);
-
 
         try {
             // Call the mutation to update the fee
@@ -95,11 +96,11 @@ const OfferFeeComponent = () => {
                             {
                                 fullData?.map((fee) => (
                                     <tr key={fee.id} className="border capitalize border-[#00adb5]">
-                                        <td className="py-2 px-4">{fee.stripePercentageFee}%</td>
-                                        <td className="py-2 px-4">{fee.topUpFees}%</td>
-                                        <td className="py-2 px-4">{fee.giftCardFee}%</td>
-                                        <td className="py-2 px-4">{fee.status}</td>
-                                        <td className="py-2 px-4">{moment(fee.createdAt).format('YYYY-MM-DD')}</td>
+                                        <td className="py-2 px-4">{fee?.stripeFee?.amount} ({fee?.stripeFee?.unit})</td>
+                                        <td className="py-2 px-4">{fee?.topUpFees?.amount} ({fee?.topUpFees?.unit})</td>
+                                        <td className="py-2 px-4">{fee?.giftCardFee?.amount} ({fee?.giftCardFee?.unit})</td>
+                                        <td className="py-2 px-4">{fee?.status}</td>
+                                        <td className="py-2 px-4">{moment(fee?.createdAt).format('YYYY-MM-DD')}</td>
                                         <td className="py-2 px-4 flex items-center gap-3">
                                             <button
                                                 onClick={() => openViewModal(fee)}
@@ -121,7 +122,7 @@ const OfferFeeComponent = () => {
                     </table>
                     <div>
                         {
-                            isLoading && <h1 className='text-xl font-semibold text-center text-blue-600 flex items-center justify-center py-3' >Loading...</h1>
+                            isLoading && <h1 className=' font-semibold text-center text-blue-600 flex items-center justify-center py-3' >Loading...</h1>
                         }
                     </div>
                 </div>
@@ -134,9 +135,9 @@ const OfferFeeComponent = () => {
                 footer={null}
             >
                 <div className="space-y-3 mt-5">
-                    <p className="text-base flex justify-between"><strong>Stripe Percentage Fee:</strong> {selectedFee?.stripePercentageFee}%</p>
-                    <p className="text-base flex justify-between"><strong>Top-Up Fee:</strong> {selectedFee?.topUpFees}%</p>
-                    <p className="text-base flex justify-between"><strong>Gift Card Fee:</strong> {selectedFee?.giftCardFee}%</p>
+                    <p className="text-base flex justify-between"><strong>Stripe Percentage Fee:</strong> {selectedFee?.stripeFee?.amount} ({selectedFee?.stripeFee?.unit})</p>
+                    <p className="text-base flex justify-between"><strong>Top-Up Fee:</strong> {selectedFee?.topUpFees?.amount} ({selectedFee?.topUpFees?.unit})</p>
+                    <p className="text-base flex justify-between"><strong>Gift Card Fee:</strong> {selectedFee?.giftCardFee?.amount} ({selectedFee?.giftCardFee?.unit})</p>
                     <p className="text-base flex justify-between"><strong>Status:</strong> {selectedFee?.status}</p>
                     <p className="text-base flex justify-between"><strong>Created At:</strong> {new Date(selectedFee?.createdAt).toLocaleString()}</p>
                 </div>
@@ -164,14 +165,34 @@ const OfferFeeComponent = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Stripe Percentage Fee</label>
+                        <label className="block text-sm font-medium">Amount</label>
                         <Input
                             type="number"
-                            value={stripePercentageFee}
+                            value={feeType === 'stripe' ? stripeAmount : feeType === 'giftCard' ? giftCardAmount : topUpAmount}
                             className="p-2"
-                            onChange={(e) => setStripePercentageFee(e.target.value)}
-                            placeholder="Enter stripe fee percentage"
+                            onChange={(e) => {
+                                if (feeType === 'stripe') setStripeAmount(e.target.value);
+                                else if (feeType === 'giftCard') setGiftCardAmount(e.target.value);
+                                else setTopUpAmount(e.target.value);
+                            }}
+                            placeholder="Enter fee amount"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">Type of Fee</label>
+                        <Select
+                            value={feeType === 'stripe' ? stripeUnit : feeType === 'giftCard' ? giftCardUnit : topUpUnit}
+                            onChange={(value) => {
+                                if (feeType === 'stripe') setStripeUnit(value);
+                                else if (feeType === 'giftCard') setGiftCardUnit(value);
+                                else setTopUpUnit(value);
+                            }}
+                            className="w-full border rounded-lg border-gray-200 h-10"
+                        >
+                            <Select.Option value="percentage">Percentage</Select.Option>
+                            <Select.Option value="fixed">Fixed</Select.Option>
+                        </Select>
                     </div>
 
                     <div className="flex justify-end space-x-4">
