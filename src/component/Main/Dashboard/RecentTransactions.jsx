@@ -95,6 +95,7 @@ const RecentTransactions = () => {
     si: (currentPage - 1) * pageSize + index + 1, // Correct the serial number based on page
     userName: `${user?.fullName}`,
     email: user.email,
+    deviceUUID: user.deviceUUID,
     role: user.role,
     joinDate: user.createdAt.split(",")[0],
   }));
@@ -157,6 +158,8 @@ const RecentTransactions = () => {
             <h2 className="text-2xl font-semibold text-center mb-10">User Details</h2>
             <p className="flex items-center justify-between my-5"><strong>Name:</strong> {selectedUser.userName || "---"}</p>
             <p className="flex items-center justify-between my-5"><strong>Email:</strong> {selectedUser.email || "---"}</p>
+            <p className="flex items-center justify-between my-5"><strong>Device UUID:</strong> {selectedUser?.deviceUUID}</p>
+            <p className="flex items-center justify-between my-5"><strong>Address:</strong> {selectedUser?.address}</p>
             <p className="flex items-center justify-between my-5"><strong>Role:</strong> {selectedUser.role}</p>
             <p className="flex items-center justify-between my-5"><strong>Join Date:</strong> {moment(selectedUser.createdAt).format("DD MMM YYYY")}</p>
           </div>
