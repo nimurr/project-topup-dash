@@ -60,6 +60,14 @@ const UserDetails = () => {
             <span>{userData?.callingCode} {userData?.phoneNumber || "-"}</span>
           </div>
           <div className="flex items-center justify-between py-3 border-b border-[#eee]">
+            <span className="font-semibold">Address</span>
+            <span> {userData?.address || "-"}</span>
+          </div>
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
+            <span className="font-semibold"> Device UUID</span>
+            <span> {userData?.deviceUUID || "-"}</span>
+          </div>
+          <div className="flex items-center justify-between py-3 border-b border-[#eee]">
             <span className="font-semibold">User Type</span>
             <span>{userData?.role || "-"}</span>
           </div>
