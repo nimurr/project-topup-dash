@@ -6,8 +6,9 @@ import OfferFeeComponent from './OfferFeeComponent';
 import moment from 'moment';
 
 const OffersAndFees = () => {
-    const { data , isLoading } = useGetAllPromoCodeListQuery();
+    const { data, isLoading } = useGetAllPromoCodeListQuery();
     const fullData = data?.data?.attributes || [];
+
 
 
     const [selectedOption, setSelectedOption] = useState('1');
@@ -176,7 +177,7 @@ const OffersAndFees = () => {
                                 <tr className="bg-white hover:bg-[#F0F9FF] !border-b capitalize" key={index}>
                                     <td className="py-3 px-4">{item?.discountType}</td>
                                     <td className="py-3 px-4">{item?.referralCode}</td>
-                                    <td className="py-3 px-4">{item?.discount}%</td>
+                                    <td className="py-3 px-4">{item?.discount}{item?.typeOfDiscount === 'fixed' ? '$' : '%'}</td>
                                     <td className="py-3 px-4">{item?.usageLimit} times</td>
                                     <td className="py-3 px-4">
                                         {moment(item?.startDate).format('dddd, MMMM Do YYYY')}

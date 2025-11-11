@@ -6,6 +6,7 @@ import moment from 'moment';
 const OfferFeeComponent = () => {
     const { data, isLoading } = useGerAllFeesQuery();
     const fullData = data?.data?.attributes;
+
     console.log(fullData);
 
     // State variables for modal visibility
@@ -96,9 +97,9 @@ const OfferFeeComponent = () => {
                             {
                                 fullData?.map((fee) => (
                                     <tr key={fee.id} className="border capitalize border-[#00adb5]">
-                                        <td className="py-2 px-4">{fee?.stripeFee?.amount} ({fee?.stripeFee?.unit})</td>
-                                        <td className="py-2 px-4">{fee?.topUpFees?.amount} ({fee?.topUpFees?.unit})</td>
-                                        <td className="py-2 px-4">{fee?.giftCardFee?.amount} ({fee?.giftCardFee?.unit})</td>
+                                        <td className="py-2 px-4">{fee?.stripeFee?.amount}{fee?.stripeFee?.unit == 'fixed' ? '$' : '%'}</td>
+                                        <td className="py-2 px-4">{fee?.topUpFees?.amount}{fee?.topUpFees?.unit == 'fixed' ? '$' : '%'}</td>
+                                        <td className="py-2 px-4">{fee?.giftCardFee?.amount}{fee?.giftCardFee?.unit == 'fixed' ? '$' : '%'}</td>
                                         <td className="py-2 px-4">{fee?.status}</td>
                                         <td className="py-2 px-4">{moment(fee?.createdAt).format('YYYY-MM-DD')}</td>
                                         <td className="py-2 px-4 flex items-center gap-3">
